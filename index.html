@@ -3223,10 +3223,10 @@
                 <!-- Demo guide + closing statement -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-top:0.65rem;">
                     <div class="info-box" style="margin:0;padding:0.6rem 0.8rem;">
-                        <div class="info-box-title">&#127909; Guide d&eacute;mo (5 min)</div>
+                        <div class="info-box-title">&#127909; d&eacute;mo </div>
                         <ol style="font-size:0.8rem;padding-left:1.1rem;line-height:1.75;margin:0;">
                             <li><code>params.m</code> &rarr; structure + tracer une valeur vers sa source</li>
-                            <li><code>traceability_matrix.md</code> &rarr; pointer 2&ndash;3 &eacute;quations</li>
+                            <li><code>traceability_matrix.md</code> &rarr; les &eacute;quations</li>
                             <li><code>run_sim(true)</code> &rarr; S1 nominal + S5 d&eacute;lestage</li>
                             <li><code>scenario_summary.csv</code> &rarr; PASS / WARN IEEE</li>
                         </ol>
@@ -3253,15 +3253,10 @@
                     <h2 class="slide-title">Gaps identifiés et pistes d'amélioration</h2>
                 </div>
                 <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
-                    Six axes d'amélioration identifiés à partir de l'analyse du backbone et de l'état de l'art.
+                    Quatres axes d'amélioration identifiés à partir de l'analyse du backbone et de l'état de l'art.
                 </p>
-                <div class="grid-3">
-                    <div class="card">
-                        <span class="card-icon">&#9889;</span>
-                        <div class="card-title">Interface AC</div>
-                        <p class="card-text">Migrer du droop moyen vers un modèle Simscape dq-frame avec LC filter et
-                            commutation réelle.</p>
-                    </div>
+                <div class="grid-2">
+
                     <div class="card">
                         <span class="card-icon">&#128295;</span>
                         <div class="card-title">Validation expérimentale</div>
@@ -3279,12 +3274,6 @@
                         <div class="card-title">Gestion d'énergie</div>
                         <p class="card-text">Explorer des EMS avancés (MPC, optimisation) au-delà du fuzzy ad-hoc à 80
                             règles de Prattico.</p>
-                    </div>
-                    <div class="card">
-                        <span class="card-icon">&#128065;</span>
-                        <div class="card-title">Estimation d'état</div>
-                        <p class="card-text">Ajouter des observateurs en ligne pour construire un vrai Digital Twin avec
-                            synchronisation temps réel.</p>
                     </div>
                     <div class="card">
                         <span class="card-icon">&#128737;</span>
@@ -3318,8 +3307,7 @@
                     <div class="card" style="border-left: 4px solid var(--accent-blue);">
                         <div class="card-title" style="color:var(--accent-blue);">Prochaines étapes</div>
                         <ul class="feature-list">
-                            <li>Migration AC vers Simscape dq-frame</li>
-                            <li>Intégration sûreté formelle</li>
+                            <li>Intégration sûreté formelle (CBF)</li>
                             <li>Validation HIL (Speedgoat)</li>
                             <li>Couplage estimateur d'état (Digital Twin)</li>
                             <li>Extension des scénarios de test</li>
@@ -3421,12 +3409,7 @@
                 { term: 'DC-link', text: 'Bus continu central qui relie les sources et le convertisseur.' }
             ],
             4: [
-                { term: 'DER', text: 'Distributed Energy Resources : sources d’énergie distribuées.' },
-                { term: 'MG', text: 'Microgrid : réseau local qui peut rester stable sans réseau principal.' },
-                { term: 'Vac', text: 'Tension côté alternatif, donc sur le bus AC.' },
-                { term: 'Vdc', text: 'Tension côté continu, donc sur le bus DC.' },
-                { term: 'SOC', text: 'Niveau de charge de la batterie.' },
-                { term: 'f', text: 'Fréquence électrique du système AC.' }
+
             ],
             5: [
                 { term: 'PV', text: 'Photovoltaïque : production électrique à partir du solaire.' },
@@ -3505,10 +3488,7 @@
                 { term: 'MPPT', text: 'Commande PV testée lors des variations d’irradiance.' }
             ],
             20: [
-                { term: 'Vdc', text: 'Tension minimale et maximale observée sur le bus continu.' },
-                { term: 'Vac', text: 'Tension côté AC mesurée au point de livraison local.' },
-                { term: 'Sinv', text: 'Puissance apparente vue par l’onduleur ou le convertisseur.' },
-                { term: 'f', text: 'Fréquence électrique mesurée sur le bus AC.' }
+
             ],
             21: [
                 { term: 'LC', text: 'Filtre inductance-condensateur pour lisser la sortie d’un convertisseur.' },
@@ -3570,14 +3550,8 @@
             { term: 'États internes', text: 'Variables d\'état intégrées dans les équations différentielles du bloc.' }
         ];
         slideGlossary[21] = [
-            { term: 'I_ph', text: 'Courant photogénéré : proportionnel à l\'irradiance G.' },
-            { term: 'V_t', text: 'Tension thermique V_t = nkT/q — dépend de la température cellule.' },
-            { term: 'P&O', text: 'Perturb & Observe : algorithme MPPT qui perturbe D et observe ΔP.' }
         ];
         slideGlossary[22] = [
-            { term: 'OCV', text: 'Open Circuit Voltage : tension batterie à vide, fonction du SOC.' },
-            { term: '2-RC', text: 'Modèle Thevenin à deux branches RC capturant les transitoires lents et rapides.' },
-            { term: 'xi_vdc', text: 'Intégrale du PI de régulation Vdc — quatrième état interne de la BESS.' }
         ];
         // Slides 23-25 (Modèle reproduit, after I/O): offset +8
         for (let index = 15; index <= 17; index++) {
