@@ -1,0 +1,3667 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Microgrid Îloté | Meeting 11 Mars 2026</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Outfit:wght@300;500;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #ffffff;
+            --bg-gradient: #f8fafc;
+            --text-dark: #0f172a;
+            --text-secondary: #64748b;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --phd-primary: #1e3a5f;
+            --phd-secondary: #2d5a87;
+            --phd-accent: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(15, 23, 42, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f5f9 100%);
+            z-index: -2;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.12;
+            animation: float 25s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--phd-primary), var(--accent-blue));
+            top: -150px;
+            left: -150px;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -10s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            top: 50%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(40px, -60px) scale(1.05);
+            }
+
+            66% {
+                transform: translate(-30px, 40px) scale(0.95);
+            }
+        }
+
+        /* ==================== HEADER ==================== */
+        header {
+            padding: 0.8rem 3rem;
+            min-height: 90px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom: 2px solid rgba(30, 58, 95, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 100;
+            position: relative;
+        }
+
+        .header-left {
+            justify-self: start;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-center {
+            justify-self: center;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-right {
+            justify-self: end;
+            display: flex;
+            align-items: center;
+        }
+
+        .supervisor-badge {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(30, 58, 95, 0.1);
+            border-radius: 12px;
+        }
+
+        .supervisor-info {
+            line-height: 1.3;
+            text-align: right;
+        }
+
+        .supervisor-label {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .supervisor-name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--phd-primary);
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--phd-primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+
+        .logo-sub {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .header-context {
+            --context-accent: var(--accent-blue);
+            margin-top: 0.35rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.22rem 0.7rem;
+            border-radius: 999px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.64rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--phd-primary);
+            background: color-mix(in srgb, var(--context-accent) 10%, white);
+            border: 1px solid color-mix(in srgb, var(--context-accent) 24%, white);
+            transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        .header-context::before {
+            content: '';
+            width: 0.42rem;
+            height: 0.42rem;
+            border-radius: 50%;
+            background: var(--context-accent);
+            flex-shrink: 0;
+        }
+
+        .institution-logo {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.05));
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 200;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--phd-primary), var(--accent-purple));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==================== MAIN & SLIDES ==================== */
+        main {
+            position: relative;
+            height: calc(100vh - 90px);
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: translateX(80px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 1.2rem 3rem 8.3rem;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slide.prev {
+            transform: translateX(-80px);
+            opacity: 0;
+        }
+
+        /* ==================== TYPOGRAPHY ==================== */
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--phd-primary) 0%, var(--phd-secondary) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.8rem;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.5;
+        }
+
+        .slide-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 2px solid var(--glass-border);
+        }
+
+        .section-badge {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.65rem;
+            background: linear-gradient(135deg, var(--phd-primary), var(--accent-purple));
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            margin-right: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .section-badge.green {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+        }
+
+        .section-badge.orange {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+        }
+
+        .slide-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* ==================== LAYOUTS ==================== */
+        .content-full {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .content-single {
+            max-width: 980px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            margin: 0.4rem 0;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--phd-secondary);
+            box-shadow: 0 12px 35px rgba(30, 58, 95, 0.15);
+        }
+
+        .card-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-text {
+            color: var(--text-secondary);
+            line-height: 1.4;
+            font-size: 0.88rem;
+        }
+
+        /* ==================== INFO/SUCCESS/WARNING BOXES ==================== */
+        .info-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .success-box-title {
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(239, 68, 68, 0.08));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+        }
+
+        .warning-box-title {
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 0.3rem;
+            font-size: 0.85rem;
+        }
+
+        /* ==================== FORMULA BLOCKS ==================== */
+        .formula-block {
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.03), rgba(124, 58, 237, 0.03));
+            border: 1px solid rgba(30, 58, 95, 0.15);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            font-family: 'Times New Roman', serif;
+            font-size: 1.05rem;
+            text-align: center;
+            margin: 0.6rem 0;
+            position: relative;
+        }
+
+        .formula-block::before {
+            content: attr(data-label);
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: white;
+            padding: 0 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.65rem;
+            color: var(--phd-primary);
+            font-weight: 600;
+        }
+
+        /* ==================== TABLES ==================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8rem 0;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--phd-primary), var(--phd-secondary));
+            color: white;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(30, 58, 95, 0.03);
+        }
+
+        /* ==================== METRICS ==================== */
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            line-height: 1.3;
+        }
+
+        /* ==================== TOC ==================== */
+        .toc-layout {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem 1.1rem;
+        }
+
+        .toc-group {
+            --toc-accent: var(--phd-secondary);
+            position: relative;
+            padding: 0.9rem;
+            border-radius: 18px;
+            border: 1px solid rgba(30, 58, 95, 0.08);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .toc-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--toc-accent), transparent);
+            opacity: 0.95;
+        }
+
+        .toc-group:hover {
+            transform: translateY(-3px);
+            border-color: color-mix(in srgb, var(--toc-accent) 34%, white);
+            box-shadow: 0 18px 38px rgba(30, 58, 95, 0.12);
+        }
+
+        .toc-group-header {
+            margin-bottom: 0.45rem;
+        }
+
+        .toc-group-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.15;
+        }
+
+        .toc-group-note {
+            font-size: 0.87rem;
+            line-height: 1.45;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            min-height: 3.8em;
+        }
+
+        .toc-group-range {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.34rem 0.62rem;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--toc-accent) 10%, white);
+            border: 1px solid color-mix(in srgb, var(--toc-accent) 20%, white);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--toc-accent);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .toc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.5rem 0.65rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(30, 58, 95, 0.08);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .toc-item:hover {
+            transform: translateY(-1px) translateX(3px);
+            border-color: color-mix(in srgb, var(--toc-accent) 45%, white);
+            box-shadow: 0 10px 24px rgba(30, 58, 95, 0.12);
+        }
+
+        .toc-item-main {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            min-width: 0;
+        }
+
+        .toc-index {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--toc-accent);
+            background: color-mix(in srgb, var(--toc-accent) 12%, white);
+            border: 1px solid color-mix(in srgb, var(--toc-accent) 22%, white);
+            flex-shrink: 0;
+        }
+
+        .toc-text {
+            font-size: 0.88rem;
+            font-weight: 500;
+            line-height: 1.28;
+            color: var(--text-dark);
+        }
+
+        .section-lead {
+            --section-accent: var(--accent-blue);
+            max-width: 1120px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-lead-banner {
+            position: relative;
+            overflow: hidden;
+            padding: 1.35rem 1.55rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg,
+                    color-mix(in srgb, var(--section-accent) 16%, white) 0%,
+                    rgba(255, 255, 255, 0.98) 58%,
+                    color-mix(in srgb, var(--section-accent) 7%, white) 100%);
+            border: 1px solid color-mix(in srgb, var(--section-accent) 24%, white);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 1rem;
+        }
+
+        .section-lead-banner::after {
+            content: '';
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            top: -120px;
+            right: -70px;
+            background: color-mix(in srgb, var(--section-accent) 18%, white);
+            opacity: 0.7;
+            filter: blur(8px);
+        }
+
+        .section-lead-kicker {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.55rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: 999px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--section-accent);
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid color-mix(in srgb, var(--section-accent) 22%, white);
+        }
+
+        .section-lead-title {
+            position: relative;
+            z-index: 1;
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.05;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-lead-text {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.55;
+        }
+
+        .section-lead-card {
+            background: var(--card-bg);
+            border: 1px solid color-mix(in srgb, var(--section-accent) 14%, white);
+            border-radius: 18px;
+            padding: 1rem 1.05rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-lead-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.65rem;
+        }
+
+        .section-lead-card-text {
+            font-size: 0.88rem;
+            line-height: 1.55;
+            color: var(--text-secondary);
+        }
+
+        .section-map {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .section-map-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.5rem 0.65rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(30, 58, 95, 0.08);
+        }
+
+        .section-map-index {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--section-accent);
+            background: color-mix(in srgb, var(--section-accent) 12%, white);
+            border: 1px solid color-mix(in srgb, var(--section-accent) 22%, white);
+            flex-shrink: 0;
+        }
+
+        .section-map-text {
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            line-height: 1.28;
+        }
+
+        .section-slide {
+            justify-content: flex-start;
+            padding-top: 2.2rem;
+        }
+
+        .section-slide .section-lead-banner {
+            padding: 1.1rem 1.35rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .section-slide .section-lead-title {
+            font-size: 2.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .section-slide .section-lead-text {
+            max-width: 900px;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .section-slide .grid-3 {
+            gap: 0.8rem;
+        }
+
+        .section-slide .section-lead-card {
+            padding: 0.9rem 0.95rem;
+        }
+
+        .section-slide .section-lead-card-title {
+            margin-bottom: 0.45rem;
+        }
+
+        .section-slide .section-lead-card-text {
+            font-size: 0.82rem;
+            line-height: 1.45;
+        }
+
+        .section-slide .section-map {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.38rem 0.45rem;
+        }
+
+        .section-slide .section-map-item {
+            padding: 0.38rem 0.55rem;
+            min-height: 100%;
+        }
+
+        .section-slide .section-map-index {
+            min-width: 1.75rem;
+            width: auto;
+            height: 1.75rem;
+            padding: 0 0.35rem;
+            font-size: 0.68rem;
+            white-space: nowrap;
+            border-radius: 999px;
+        }
+
+        .section-slide .section-map-text {
+            font-size: 0.84rem;
+            line-height: 1.2;
+        }
+
+        /* ==================== ARCHITECTURE ==================== */
+        .arch-box {
+            background: white;
+            border: 2px solid var(--phd-primary);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            font-size: 0.85rem;
+        }
+
+        .arch-box.green {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(6, 182, 212, 0.05));
+        }
+
+        .arch-box.orange {
+            border-color: var(--accent-orange);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(239, 68, 68, 0.05));
+        }
+
+        .arch-arrow {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--phd-primary);
+            margin: 0.2rem 0;
+        }
+
+        .arch-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin: 0.4rem 0;
+            flex-wrap: wrap;
+        }
+
+        .arch-row .arrow {
+            font-size: 1.3rem;
+            color: var(--accent-orange);
+        }
+
+        /* ==================== LISTS ==================== */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.88rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '→';
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background: rgba(30, 58, 95, 0.08);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.82em;
+            color: var(--phd-primary);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(30, 58, 95, 0.1), rgba(37, 99, 235, 0.1));
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--phd-primary);
+        }
+
+        .img-result {
+            max-width: 100%;
+            max-height: 32vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .status-pass {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .status-warn {
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+
+        /* ==================== NAVIGATION ==================== */
+        nav {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--phd-primary);
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        .nav-btn:hover {
+            background: rgba(30, 58, 95, 0.08);
+            transform: scale(1.1);
+        }
+
+        .nav-separator {
+            width: 1px;
+            height: 18px;
+            background: rgba(30, 58, 95, 0.15);
+        }
+
+        .slide-counter {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--phd-primary);
+            font-weight: 700;
+            min-width: 55px;
+            text-align: center;
+        }
+
+        .glossary-bar {
+            position: fixed;
+            left: 50%;
+            bottom: 5.35rem;
+            transform: translateX(-50%);
+            width: min(1240px, calc(100% - 3rem));
+            display: flex;
+            align-items: flex-start;
+            gap: 0.7rem;
+            padding: 0.52rem 0.75rem;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(30, 58, 95, 0.1);
+            border-radius: 18px;
+            box-shadow: 0 12px 34px rgba(15, 23, 42, 0.12);
+            z-index: 190;
+        }
+
+        .glossary-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.66rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--phd-primary);
+            padding-top: 0.18rem;
+            white-space: nowrap;
+        }
+
+        .glossary-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.5rem;
+            flex: 1;
+        }
+
+        .glossary-item {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.14rem;
+            min-width: 0;
+            padding: 0.25rem 0.45rem;
+            border-radius: 10px;
+            background: rgba(30, 58, 95, 0.05);
+            border: 1px solid rgba(30, 58, 95, 0.08);
+            font-size: 0.72rem;
+            line-height: 1.34;
+            color: var(--text-secondary);
+        }
+
+        .glossary-term {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.69rem;
+            font-weight: 700;
+            color: var(--phd-primary);
+            white-space: nowrap;
+        }
+
+        .glossary-items.stacked {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.28rem 0.45rem;
+            width: 100%;
+        }
+
+        .glossary-bar.is-hidden {
+            display: none;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide.active .card {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .slide.active .card:nth-child(4) {
+            animation-delay: 0.35s;
+        }
+
+        .slide.active .card:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .slide.active .card:nth-child(6) {
+            animation-delay: 0.45s;
+        }
+
+        .slide.active .formula-block {
+            animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .metric-card {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .slide.active .info-box,
+        .slide.active .success-box,
+        .slide.active .warning-box {
+            animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.3s;
+        }
+
+        .slide.active table {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+            animation-delay: 0.15s;
+        }
+
+        .slide.active .slide-header {
+            animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 1100px) {
+            .toc-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .slide {
+                padding: 1rem 1.2rem 10.2rem;
+            }
+
+            .glossary-bar {
+                width: calc(100% - 1.2rem);
+                bottom: 5rem;
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+
+            .section-lead-title {
+                font-size: 2rem;
+            }
+
+            .section-slide .section-map {
+                grid-template-columns: 1fr;
+            }
+
+            .glossary-items.stacked {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            .slide {
+                page-break-after: always;
+                min-height: auto;
+                padding: 1rem;
+            }
+
+            nav,
+            .glossary-bar,
+            .progress-bar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-gradient"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- ==================== HEADER ==================== -->
+    <header>
+        <div class="header-left">
+            <img src="https://www.supcom.tn/storage/app/public/coordonnees/April2025/aa8HeWk95QdtPlGED1ZY.png"
+                alt="Sup'Com" class="institution-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="header-center">
+            <div class="logo">
+                Microgrid AC/DC
+                <span class="logo-sub">Thèse PhD &mdash; Sup'Com, Carthage</span>
+            </div>
+            <div class="header-context" id="header-context">Ouverture</div>
+        </div>
+        <div class="header-right">
+            <div class="supervisor-badge">
+                <div class="supervisor-info">
+                    <div class="supervisor-label">Encadrement</div>
+                    <div class="supervisor-name">Prof. Rim BARRAK</div>
+                    <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:2px;">
+                        Mme. Fatma ROUSSI
+                        <br> Mme. Hela GASSARA
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== SLIDES ==================== -->
+    <main id="slides-container">
+
+        <!-- ==================== SLIDE 0: TITRE ==================== -->
+        <div class="slide active">
+            <div class="content-full text-center">
+                <h1 class="hero-title">Architecture de simulation<br>du microgrid îloté hybride AC/DC</h1>
+                <p class="hero-subtitle">
+                    Reproduction et paramétrage d'une plante de référence<br>
+                </p>
+                <div class="grid-3 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">150 kWp</div>
+                        <div class="metric-label">Photovoltaïque<br>12s &times; 23p modules</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">200 kWh</div>
+                        <div class="metric-label">Stockage batterie<br>LiFePO4, 2-RC</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Scénarios valides<br>Conformité IEEE</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    <strong>Oussama AKIR</strong><br>Mars 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 1: SOMMAIRE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">NAVIGATION</span>
+                    <h2 class="slide-title">Sommaire</h2>
+                </div>
+                <div class="toc-layout">
+                    <div class="toc-group" style="--toc-accent: var(--accent-blue);" onclick="goToSlide(2)">
+                        <div class="toc-group-header">
+                            <div class="toc-group-title">Cadrage scientifique</div>
+                        </div>
+                        <p class="toc-group-note">Problématique, cadre IEEE, détail des 3 standards, notions clés,
+                            état de l'art et analyse détaillée des publications.</p>
+                        <span class="toc-group-range">Slides 03-12</span>
+                    </div>
+                    <div class="toc-group" style="--toc-accent: var(--accent-green);" onclick="goToSlide(12)">
+                        <div class="toc-group-header">
+                            <div class="toc-group-title">Prattico 2025</div>
+                        </div>
+                        <p class="toc-group-note">Sélection du papier backbone, lecture de sa fiche technique et
+                            extraction des composants qui servent de référence au modèle.</p>
+                        <span class="toc-group-range">Slides 13-17</span>
+                    </div>
+                    <div class="toc-group" style="--toc-accent: var(--accent-purple);" onclick="goToSlide(17)">
+                        <div class="toc-group-header">
+                            <div class="toc-group-title">Modèle reproduit</div>
+                        </div>
+                        <p class="toc-group-note">Choix de reproduction, architecture, équations, charges et hypothèses
+                            qui transforment le backbone en modèle exécutable et traçable.</p>
+                        <span class="toc-group-range">Slides 18-26</span>
+                    </div>
+                    <div class="toc-group" style="--toc-accent: var(--accent-orange);" onclick="goToSlide(26)">
+                        <div class="toc-group-header">
+                            <div class="toc-group-title">Validation et suite</div>
+                        </div>
+                        <p class="toc-group-note">Scénarios, résultats, écarts restants, feuille de route et conclusion
+                            pour fermer la boucle entre simulation et perspectives.</p>
+                        <span class="toc-group-range">Slides 27-32</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 2: INTRO CONTEXTE ==================== -->
+        <div class="slide section-slide">
+            <div class="section-lead" style="--section-accent: var(--accent-blue);">
+                <div class="section-lead-banner">
+                    <div class="section-lead-kicker">Partie I</div>
+                    <h1 class="section-lead-title">Contexte scientifique</h1>
+                    <p class="section-lead-text">
+                        Cette partie pose le cadre scientifique de l'étude: question de recherche, contraintes du mode
+                        îloté et vocabulaire conceptuel préalable à la reproduction.
+                    </p>
+                </div>
+                <div class="grid-3" style="margin-top:0.1rem;">
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Objectif scientifique</div>
+                        <p class="section-lead-card-text">
+                            Délimiter le périmètre de la thèse en identifiant le problème traité, les variables
+                            critiques de stabilité et les notions de référence.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Approche</div>
+                        <p class="section-lead-card-text">
+                            Partir des enjeux du microgrid, rappeler le socle IEEE, fixer les définitions opératoires,
+                            puis situer l'étude dans la littérature.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Résultat attendu</div>
+                        <p class="section-lead-card-text">
+                            Fournir un cadre conceptuel défendable qui légitime le choix du backbone et
+                            l'interprétation des résultats.
+                        </p>
+                    </div>
+                </div>
+                <div class="section-lead-card" style="margin-top:1rem;">
+                    <div class="section-lead-card-title">Structure de la partie</div>
+                    <div class="section-map">
+                        <div class="section-map-item"><span class="section-map-index">04</span><span
+                                class="section-map-text">Problématique et enjeux</span></div>
+                        <div class="section-map-item"><span class="section-map-index">05</span><span
+                                class="section-map-text">Cadre normatif IEEE</span></div>
+                        <div class="section-map-item"><span class="section-map-index">06-08</span><span
+                                class="section-map-text">Détail : 1547 / 2030.7 / 2030.8</span></div>
+                        <div class="section-map-item"><span class="section-map-index">09</span><span
+                                class="section-map-text">Définitions clés</span></div>
+                        <div class="section-map-item"><span class="section-map-index">10-12</span><span
+                                class="section-map-text">Revue de littérature et approfondissements</span></div>
+                        <div class="section-map-item"><span class="section-map-index">11</span><span
+                                class="section-map-text">Modélisation &mdash; Analyse détaillée</span></div>
+                        <div class="section-map-item"><span class="section-map-index">12</span><span
+                                class="section-map-text">Digital Twin &mdash; Analyse détaillée</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: PROBLÉMATIQUE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">CONTEXTE</span>
+                    <h2 class="slide-title">Problématique</h2>
+                </div>
+                <p style="font-size:0.95rem; margin-bottom:1rem; line-height:1.6;">
+                    Un microgrid îloté fonctionne <strong>sans soutien du réseau principal</strong>.
+                    Toute perturbation &mdash; variation d'irradiance, changement de charge, variation de SOC &mdash;
+                    doit être absorbée localement par les composants du système.
+                </p>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">Contraintes de démonstration</div>
+                        <ul class="feature-list">
+                            <li>Tension AC : 207 &le; V<sub>ph</sub> &le; 253 V <span
+                                    style="color:var(--text-secondary); font-size:0.8rem;">(IEEE 1547-2018)</span></li>
+                            <li>Fréquence : 49.5 &le; f &le; 50.5 Hz <span
+                                    style="color:var(--text-secondary); font-size:0.8rem;">(IEEE 1547-2018)</span></li>
+                            <li>SOC batterie : 30% &le; SOC &le; 90% <span
+                                    style="color:var(--text-secondary); font-size:0.8rem;">(borne interne)</span></li>
+                            <li>Tension DC-link : 600 &le; V<sub>dc</sub> &le; 820 V <span
+                                    style="color:var(--text-secondary); font-size:0.8rem;">(borne opérationnelle)</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Enjeu</div>
+                        <p class="card-text" style="font-size:0.92rem; line-height:1.6;">
+                            Pour valider des stratégies de commande avancées, il faut d'abord disposer d'un
+                            <strong>modèle de plante valide, reproductible et traçable</strong> vers des sources
+                            académiques.
+                        </p>
+                        <div class="info-box" style="margin-top:0.8rem;">
+                            <p style="font-size:0.88rem;"><strong>Objet de cette présentation :</strong> le modèle de
+                                plante, ses paramètres et ses résultats de simulation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3: CADRE NORMATIF ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">STANDARDS</span>
+                    <h2 class="slide-title">Cadre Normatif</h2>
+                </div>
+                <p style="font-size:0.9rem; margin-bottom:0.8rem; color:var(--text-secondary);">
+                    Trois standards IEEE encadrent les limites du système et les procédures de validation.
+                </p>
+                <table>
+                    <tr>
+                        <th>Standard</th>
+                        <th>Scope</th>
+                        <th>Contraintes clés</th>
+                    </tr>
+                    <tr>
+                        <td><strong>IEEE 1547-2018</strong></td>
+                        <td>Interconnexion des ( distributed energy resources ) </td>
+                        <td>
+                            Cat. II : 0.88 &le; V/V<sub>nom</sub> &le; 1.10<br>
+                            f : 49.5 &ndash; 50.5 Hz &mdash; Ride-through
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>IEEE 2030.7</strong></td>
+                        <td>Spécification contrôleur MG</td>
+                        <td>
+                            Dispatch, transition îlotée, gestion énergie
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>IEEE 2030.8</strong></td>
+                        <td>Procédures de test MG</td>
+                        <td>
+                            Scénarios normalisés, CHIL / PHIL
+                        </td>
+                    </tr>
+                </table>
+                <div class="success-box">
+                    <div class="success-box-title">Impact direct</div>
+                    <p style="font-size:0.88rem;">IEEE 1547 borne <code>Vac</code> et <code>f</code>. Nous complétons
+                        avec des bornes internes sur <code>Vdc</code> et <code>SOC</code> pour le modèle.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3b: IEEE 1547-2018 DETAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">IEEE 1547-2018</span>
+                    <h2 class="slide-title">Interconnexion et interoperabilite des DER</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    Revision majeure de 2018 : passage d'un paradigme <em>trip-immediately</em> (2003)
+                    a un paradigme <em>ride-through mandatory</em>. Trois categories de performance.
+                </p>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-title" style="color:var(--text-secondary);">Categorie I</div>
+                        <p class="card-text"><strong>Basique.</strong> Ride-through limite. Trip rapide :
+                            UV1 = 0.70 pu / 2.0 s, OV1 = 1.10 pu / 2.0 s.</p>
+                    </div>
+                    <div class="card" style="border: 2px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue);">Categorie II &mdash; notre choix</div>
+                        <p class="card-text"><strong>Intermediaire.</strong> Ride-through etendu :
+                            UV1 = 0.70 pu / 10.0 s, OV1 = 1.10 pu / 2.0 s.
+                            UV2 = 0.45 pu / 0.16 s, OV2 = 1.20 pu / 0.16 s.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title" style="color:var(--text-secondary);">Categorie III</div>
+                        <p class="card-text"><strong>Avancee.</strong> Ride-through maximal :
+                            UV1 = 0.88 pu / 21.0 s, OV1 = 1.10 pu / 13.0 s. Support reseau complet.</p>
+                    </div>
+                </div>
+                <table style="margin-top:0.6rem;">
+                    <tr>
+                        <th>Fonction</th>
+                        <th>1547-2003</th>
+                        <th>1547-2018</th>
+                    </tr>
+                    <tr>
+                        <td>Ride-through tension</td>
+                        <td>Non requis (trip)</td>
+                        <td><strong>Obligatoire</strong> (mandatory operating)</td>
+                    </tr>
+                    <tr>
+                        <td>Ride-through frequence</td>
+                        <td>Non requis</td>
+                        <td><strong>Obligatoire</strong> avec support actif</td>
+                    </tr>
+                    <tr>
+                        <td>Puissance reactive</td>
+                        <td>PF = 1 uniquement</td>
+                        <td><strong>4 modes</strong> : PF fixe, Q fixe, volt-var, volt-watt</td>
+                    </tr>
+                    <tr>
+                        <td>Anti-ilotage</td>
+                        <td>Detection passive</td>
+                        <td>Detection active + passive + communication</td>
+                    </tr>
+                </table>
+                <div class="info-box" style="margin-top:0.5rem;">
+                    <p style="font-size:0.82rem;"><strong>Pour notre modele (50 Hz) :</strong> On applique Cat. II avec
+                        V<sub>ac</sub> &isin; [0.90, 1.10] &times; 230 = [207, 253] V et f &isin; [49.5, 50.5] Hz.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3c: IEEE 2030.7-2017 DETAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">IEEE 2030.7</span>
+                    <h2 class="slide-title">Specification du controleur microgrid</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    Definit les fonctions du MEMS (Microgrid Energy Management System) organisees en trois niveaux
+                    hierarchiques.
+                </p>
+                <div class="grid-3">
+                    <div class="card">
+                        <span class="card-icon" style="font-size:1.2rem;">&#128310;</span>
+                        <div class="card-title">Niveau superieur</div>
+                        <ul class="feature-list" style="font-size:0.82rem;">
+                            <li>Interface operateur (SCADA)</li>
+                            <li>Participation au marche</li>
+                            <li>Dispatch optimal</li>
+                            <li>Communication inter-systemes</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border: 2px solid var(--accent-blue);">
+                        <span class="card-icon" style="font-size:1.2rem;">&#9881;</span>
+                        <div class="card-title">Niveau coeur (Core)</div>
+                        <ul class="feature-list" style="font-size:0.82rem;">
+                            <li><strong>Dispatch</strong> : consignes P, Q au PCC, coordination DER (echelle : minutes)
+                            </li>
+                            <li><strong>Transition</strong> : connect / disconnect, ilotage planifie et non-planifie
+                                (echelle : ms)</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon" style="font-size:1.2rem;">&#128268;</span>
+                        <div class="card-title">Niveau inferieur</div>
+                        <ul class="feature-list" style="font-size:0.82rem;">
+                            <li>Controle V / f local</li>
+                            <li>Controle P / Q par DER</li>
+                            <li>Fonctions specifiques dispositif</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="success-box" style="margin-top:0.6rem;">
+                    <div class="success-box-title">Lien avec notre modele</div>
+                    <p style="font-size:0.82rem;">Notre droop P-f et Q-V implemente les fonctions du <strong>niveau
+                            inferieur</strong>.
+                        La politique de delestage correspond a une fonction de <strong>dispatch simplifie</strong>.
+                        L'approche est modulaire : chaque couche peut etre amelioree independamment.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 3d: IEEE 2030.8-2018 DETAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">IEEE 2030.8</span>
+                    <h2 class="slide-title">Procedures de test du controleur microgrid</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    Standard compagnon de 2030.7. Definit <strong>comment verifier</strong> la conformite du controleur
+                    via des scenarios normalises et des bancs d'essai a differents niveaux de fidelite.
+                </p>
+                <div class="grid-2">
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.5rem;">Scenarios de test normalises</h3>
+                        <table>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>Evenement</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Ilotage planifie</strong></td>
+                                <td>Deconnexion commandee du reseau</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ilotage non-planifie</strong></td>
+                                <td>Perte inattendue du reseau</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Reconnexion</strong></td>
+                                <td>Resynchronisation et fermeture</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Black start</strong></td>
+                                <td>Demarrage sans reseau disponible</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Delestage</strong></td>
+                                <td>Reduction de charge par paliers</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 style="font-size:0.95rem; margin-bottom:0.5rem;">Niveaux de banc d'essai</h3>
+                        <div class="card" style="margin-bottom:0.5rem;">
+                            <div class="card-title">Simulation pure (SIL)</div>
+                            <p class="card-text">Plante et controleur entierement logiciels. C'est notre niveau actuel.
+                            </p>
+                        </div>
+                        <div class="card" style="margin-bottom:0.5rem;">
+                            <div class="card-title">CHIL &mdash; Controller HIL</div>
+                            <p class="card-text">Controleur sur hardware reel (ex: Speedgoat), plante simulee en temps
+                                reel.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">PHIL &mdash; Power HIL</div>
+                            <p class="card-text">Controleur + amplificateur de puissance reels, interaction avec plante
+                                simulee.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="warning-box" style="margin-top:0.5rem;">
+                    <div class="warning-box-title">Perspective</div>
+                    <p style="font-size:0.82rem;">Nos 5 scenarios (S1&ndash;S5) s'inspirent de cette norme. Le passage
+                        SIL &rarr; CHIL via Speedgoat est identifie comme prochaine etape de validation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 4: DÉFINITIONS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">DÉFINITIONS</span>
+                    <h2 class="slide-title">Concepts clés</h2>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <span class="card-icon">&#9889;</span>
+                        <div class="card-title">Grid-Forming vs Grid-Following</div>
+                        <p class="card-text">En mode îloté, l'onduleur doit <strong>imposer</strong> la tension et la
+                            fréquence (grid-forming), contrairement au mode connecté où il les <strong>suit</strong>
+                            (grid-following). Le VSC de Prattico fonctionne en grid-forming avec référence interne de V
+                            et f.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#128260;</span>
+                        <div class="card-title">Droop Control P-f / Q-V</div>
+                        <p class="card-text">Régulation décentralisée inspirée des générateurs synchrones : la fréquence
+                            chute proportionnellement à la puissance active (<em>f = f<sub>0</sub> &minus;
+                                m<sub>p</sub>&middot;P</em>) et la tension chute avec la réactive (<em>V = V<sub>0</sub>
+                                &minus; n<sub>q</sub>&middot;Q</em>). Permet le partage de charge sans bus de
+                            communication.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#127774;</span>
+                        <div class="card-title">MPPT Perturb &amp; Observe</div>
+                        <p class="card-text">Algorithme de poursuite du point de puissance maximale du PV. Perturbe le
+                            duty cycle du boost, observe la variation de puissance &Delta;P, et ajuste la direction.
+                            Simple, robuste, et largement adopté dans la littérature pour le suivi du MPP.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#128268;</span>
+                        <div class="card-title">Topologie hybride AC/DC</div>
+                        <p class="card-text">Architecture où les sources DC (PV, batterie) partagent un bus DC commun,
+                            connecté au bus AC via un VSC unique. Réduit les étages de conversion par rapport à une
+                            topologie tout-AC et permet l'alimentation directe des charges DC sans onduleur
+                            supplémentaire.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5: REVUE DE LITTÉRATURE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">LITTÉRATURE</span>
+                    <h2 class="slide-title">Revue de littérature</h2>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <h3 style="font-size:1rem; margin-bottom:0.5rem;">Modélisation de microgrids</h3>
+                        <table>
+                            <tr>
+                                <th>Auteurs</th>
+                                <th>Année</th>
+                                <th>Apport</th>
+                            </tr>
+                            <tr>
+                                <td>Prattico et al.</td>
+                                <td>2025</td>
+                                <td>Hybride AC/DC, Fuzzy EMS, Simscape</td>
+                            </tr>
+                            <tr>
+                                <td>Soares et al.</td>
+                                <td>2023</td>
+                                <td>PV-Battery droop, grid-forming</td>
+                            </tr>
+                            <tr>
+                                <td>Campus MG</td>
+                                <td>2023</td>
+                                <td>Modèles MATLAB campus universitaire</td>
+                            </tr>
+                            <tr>
+                                <td>Nature Sci Rep</td>
+                                <td>2025</td>
+                                <td>Grid-forming vs grid-following</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3 style="font-size:1rem; margin-bottom:0.5rem;">Digital Twin & supervision</h3>
+                        <table>
+                            <tr>
+                                <th>Auteurs</th>
+                                <th>Année</th>
+                                <th>Apport</th>
+                            </tr>
+                            <tr>
+                                <td>Jiang et al.</td>
+                                <td>2023</td>
+                                <td>DT monitoring microgrid</td>
+                            </tr>
+                            <tr>
+                                <td>Sado et al.</td>
+                                <td>2024</td>
+                                <td>DT prediction et estimation</td>
+                            </tr>
+                            <tr>
+                                <td>Sivaneasan et al.</td>
+                                <td>2022</td>
+                                <td>DT gestion énergie</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Constat</div>
+                    <p style="font-size:0.88rem;">Les modèles existants couvrent la simulation et la commande, mais
+                        rarement la traçabilité complète des paramètres vers des sources primaires. Peu de travaux
+                        fournissent un modèle reproductible avec tous les paramètres documentés.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5a: MODÉLISATION MICROGRIDS — DÉTAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">LITTÉRATURE</span>
+                    <h2 class="slide-title">Modélisation de microgrids — Analyse détaillée</h2>
+                </div>
+                <div class="grid-2">
+                    <div class="card" style="border-left: 3px solid var(--accent-green);">
+                        <div class="card-title" style="color:var(--accent-green);">Prattico et al. 2025
+                            <span style="font-size:0.7rem; color:var(--text-secondary); font-weight:400;"> &mdash;
+                                Energies (MDPI), 18(22)</span>
+                        </div>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Enhancing Power Quality and Reducing Costs in Hybrid AC/DC
+                            Microgrids via Fuzzy EMS
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> Modèle complet Simscape switching-level. 150 kWp PV + 200 kWh BESS
+                            + 60 kW éolien + 20 kW FC. Fuzzy EMS 80 règles. SOC 30–90%.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Dimensionnement réaliste, 3 types de charges, journal indexé open
+                            access 2025. <span style="color:var(--accent-green); font-weight:600;">Notre
+                                backbone.</span>
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Paramètres PV/batterie non publiés en intégralité. Pas de
+                            traçabilité explicite vers les sources primaires.
+                        </p>
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue);">Soares et al. 2023
+                            <span style="font-size:0.7rem; color:var(--text-secondary); font-weight:400;"> &mdash; SBAI
+                                (Brésil)</span>
+                        </div>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Load Change Case Study of an Islanded PV-Battery Unit Controlled by
+                            Grid-Forming Droop
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> Droop grid-forming pour unité PV+batterie en îloté. Gestion SOC et
+                            curtailment PV. Étude de charges variables.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Architecture PV+BESS similaire à la nôtre. Droop grid-forming
+                            bien documenté.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Conférence nationale (faible visibilité). Charges homogènes (pas
+                            de mix AC/DC). Petit dimensionnement.
+                        </p>
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--accent-purple);">
+                        <div class="card-title" style="color:var(--accent-purple);">Simonazzi et al. 2023
+                            <span style="font-size:0.7rem; color:var(--text-secondary); font-weight:400;"> &mdash;
+                                Energies (MDPI), 16(16)</span>
+                        </div>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Models for MATLAB Simulation of a University Campus Micro-Grid
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> Bibliothèque de composants Simulink. Simulations multi-échelles
+                            (semaine, année, îloté). PV + BESS + véhicules électriques.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Approche modulaire réutilisable. Même journal que Prattico.
+                            Validation économique et environnementale.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Pas de détail onduleur (VSC absent). Pas de droop ni de régulation
+                            V/f. Inadapté pour l'étude du mode îloté.
+                        </p>
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--accent-orange);">
+                        <div class="card-title" style="color:var(--accent-orange);">Hossain et al. 2025
+                            <span style="font-size:0.7rem; color:var(--text-secondary); font-weight:400;"> &mdash;
+                                Scientific Reports (Nature)</span>
+                        </div>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Enhancing Microgrid Resilience through Integrated Grid-Forming and
+                            Grid-Following Inverter Strategies
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> Comparaison GFM vs GFL avec BESS. FRT : récupération tension en
+                            300 ms, fréquence &plusmn; 0.5 Hz. Stabilisation en 1 s après chute 50% irradiance.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Confirme la nécessité du grid-forming en îloté. Métriques de
+                            performance comparatives GFM/GFL.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Focus résilience/FRT, pas de modèle de plante complet. Pas de
+                            traçabilité paramétrique.
+                        </p>
+                    </div>
+                </div>
+                <div class="success-box" style="margin-top:0.3rem;">
+                    <div class="success-box-title">Synthèse</div>
+                    <p style="font-size:0.82rem;">Prattico est le seul à combiner topologie hybride AC/DC, 3 types de
+                        charges,
+                        dimensionnement réaliste (150 kWp, 200 kWh) et publication journal indexé 2025. C'est pourquoi
+                        il constitue notre backbone.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 5b: DIGITAL TWIN — DÉTAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">LITTÉRATURE</span>
+                    <h2 class="slide-title">Digital Twin pour microgrids — Analyse détaillée</h2>
+                </div>
+                <div class="grid-3">
+                    <div class="card" style="border-top: 3px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue); font-size:0.9rem;">Jiang et al. 2023
+                        </div>
+                        <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.4rem;">CEEGE 2023
+                            &mdash; IEEE Conference</p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Unleashing the Potential of Digital Twin Technology in Microgrid
+                            &mdash; A Case Study of a Tropical Microgrid
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> DT d'un microgrid réel (campus SIT@NYP, Singapour) sur OPAL-RT.
+                            Monitoring temps réel, comparaison simulation vs actifs physiques.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Démontre la faisabilité du DT temps réel sur un microgrid
+                            tropical avec PV intermittent.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Monitoring uniquement. Pas de boucle de contrôle fermée ni de
+                            garanties de sûreté formelles.
+                        </p>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--accent-green);">
+                        <div class="card-title" style="color:var(--accent-green); font-size:0.9rem;">Sivaneasan et al.
+                            2025</div>
+                        <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.4rem;">IEEE Internet
+                            Computing</p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Cognitive Digital Twin for Microgrid: A Real-World Study for
+                            Intelligent Energy Management
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> DT cognitif : client temps réel + serveur cloud pour optimisation.
+                            Prédiction LSTM. Coût opérationnel à 0.24% de l'optimal théorique.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Architecture client-cloud déployée sur un microgrid réel.
+                            Validation économique concrète.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Focus EMS/coûts. Pas de contraintes de sûreté sur V, f ou SOC. Pas
+                            de CBF ni de filtre de sécurité.
+                        </p>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--accent-purple);">
+                        <div class="card-title" style="color:var(--accent-purple); font-size:0.9rem;">Sado et al. 2024
+                        </div>
+                        <p style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.4rem;">IEEE Trans.
+                            Transportation Electrification</p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Titre :</strong> Query-and-Response Digital Twin Framework Using a Multi-Domain,
+                            Multi-Function Image Folio
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Apport :</strong> DT hiérarchique pour microgrids DC navals. Multi-domaine :
+                            thermique, électrique, prédictif. Forecasting temps réel.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem; margin-bottom:0.3rem;">
+                            <strong>Intérêt :</strong> Architecture modulaire par couches. Validation expérimentale sur
+                            microgrid DC réel.
+                        </p>
+                        <p class="card-text" style="font-size:0.8rem;">
+                            <strong>Limite :</strong> Application navale (DC uniquement). Pas de mode AC ni de droop
+                            V/f. Pas de garanties formelles de sûreté.
+                        </p>
+                    </div>
+                </div>
+                <div class="warning-box" style="margin-top:0.4rem;">
+                    <div class="warning-box-title">Gap identifié</div>
+                    <p style="font-size:0.82rem;">Les trois travaux partagent la même lacune : <strong>aucune garantie
+                            formelle de sûreté</strong>
+                        (CBF, ensembles invariants). Le DT fait du monitoring et de la prédiction, mais ne garantit pas
+                        mathématiquement que V, f et SOC restent dans les bornes. C'est précisément le positionnement de
+                        notre thèse.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: INTRO PRATTICO ==================== -->
+        <div class="slide section-slide">
+            <div class="section-lead" style="--section-accent: var(--accent-green);">
+                <div class="section-lead-banner">
+                    <div class="section-lead-kicker">Partie II</div>
+                    <h1 class="section-lead-title">Prattico 2025</h1>
+                    <p class="section-lead-text">
+                        Cette partie justifie Prattico 2025 comme article backbone et vérifie que cette référence est
+                        assez riche et traçable pour soutenir la reproduction.
+                    </p>
+                </div>
+                <div class="grid-3" style="margin-top:0.1rem;">
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Objectif scientifique</div>
+                        <p class="section-lead-card-text">
+                            Retenir une référence principale cohérente par sa topologie, son niveau de détail et sa
+                            proximité avec l'objet doctoral.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Approche</div>
+                        <p class="section-lead-card-text">
+                            Lire le papier comme un système à reconstruire: architecture, composants, puissances, lois
+                            de commande et zones insuffisamment documentées.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Résultat attendu</div>
+                        <p class="section-lead-card-text">
+                            Stabiliser une base documentaire à partir de laquelle chaque choix de modélisation pourra
+                            être classé comme reprise, adaptation ou hypothèse.
+                        </p>
+                    </div>
+                </div>
+                <div class="section-lead-card" style="margin-top:1rem;">
+                    <div class="section-lead-card-title">Structure de la partie</div>
+                    <div class="section-map">
+                        <div class="section-map-item"><span class="section-map-index">14</span><span
+                                class="section-map-text">Sélection de l'article backbone</span></div>
+                        <div class="section-map-item"><span class="section-map-index">15</span><span
+                                class="section-map-text">Prattico 2025 &mdash; Fiche technique</span></div>
+                        <div class="section-map-item"><span class="section-map-index">16</span><span
+                                class="section-map-text">Prattico 2025 &mdash; Architecture globale</span></div>
+                        <div class="section-map-item"><span class="section-map-index">17</span><span
+                                class="section-map-text">Prattico 2025 &mdash; Composants</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: SÉLECTION BACKBONE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">SÉLECTION</span>
+                    <h2 class="slide-title">Sélection de l'article backbone</h2>
+                </div>
+                <p style="font-size:0.9rem; margin-bottom:0.8rem; color:var(--text-secondary);">
+                    Trois articles candidats ont été évalués selon des critères précis : composants, charges, journal,
+                    paramètres.
+                </p>
+                <table>
+                    <tr>
+                        <th>Critère</th>
+                        <th>Soares 2023</th>
+                        <th style="background:linear-gradient(135deg, var(--accent-green), var(--accent-cyan));">
+                            Prattico 2025</th>
+                        <th>Campus MG 2023</th>
+                    </tr>
+                    <tr>
+                        <td><strong>PV</strong></td>
+                        <td>Single-diode</td>
+                        <td>Single-diode 5 param.</td>
+                        <td>PV + MPPT</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Batterie</strong></td>
+                        <td>Rint (Baronti)</td>
+                        <td>Rint + SOC (200 kWh)</td>
+                        <td>Charge/décharge</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Charges</strong></td>
+                        <td>3 resistives</td>
+                        <td style="font-weight:600;">3 types différents</td>
+                        <td>Campus</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Onduleur</strong></td>
+                        <td>VSI + LCL + droop</td>
+                        <td>VSC 150 kVA dq-frame</td>
+                        <td>Non détaillé</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Journal</strong></td>
+                        <td>Conférence SBAI</td>
+                        <td style="font-weight:600;">Energies MDPI (OA)</td>
+                        <td>Energies MDPI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Année</strong></td>
+                        <td>2023</td>
+                        <td style="font-weight:600;">2025</td>
+                        <td>2023</td>
+                    </tr>
+                </table>
+                <div class="success-box">
+                    <div class="success-box-title">Prattico retenu</div>
+                    <p style="font-size:0.88rem;">3 types de charges différents, journal indexé open-access, 2025 (le
+                        plus récent), dimensionnement réaliste (150 kWp, 200 kWh), paramètres documentés.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 7: PRATTICO FICHE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge green">BACKBONE</span>
+                    <h2 class="slide-title">Prattico et al. (2025) &mdash; Fiche technique</h2>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title">Publication</div>
+                        <ul class="feature-list">
+                            <li><strong>Titre :</strong> Enhancing Power Quality and Reducing Costs in Hybrid AC/DC
+                                Microgrids via Fuzzy EMS</li>
+                            <li><strong>Journal :</strong> Energies (MDPI), Vol. 18, No. 22, Art. 5985</li>
+                            <li><strong>Année :</strong> 2025, Open Access</li>
+                            <li><strong>Auteurs :</strong> D. Prattico, F. Lagana, M. Versaci, D. Frankovic, A.
+                                Jakoplic, S. Vlahinic, F. La Foresta</li>
+                            <li><strong>DOI :</strong> <code>10.3390/en18225985</code></li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Méthodologie</div>
+                        <ul class="feature-list">
+                            <li><strong>Outil :</strong> MATLAB R2024b, Simscape Electrical</li>
+                            <li><strong>Approche :</strong> Modélisation physique (switching-level)</li>
+                            <li><strong>Pas de simulation :</strong> 20 &mu;s</li>
+                            <li><strong>Durée simulée :</strong> 24 secondes</li>
+                            <li><strong>EMS :</strong> Fuzzy logic, 80 règles, 3 entrées, 4 sorties</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Objectif du papier</div>
+                    <p style="font-size:0.88rem;">Améliorer la qualité de puissance et réduire les coûts opérationnels
+                        dans un microgrid hybride AC/DC îloté via un système de gestion d'énergie fuzzy. Le papier
+                        présente un modèle complet avec PV, batterie, éolienne, pile à combustible et charges mixtes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 9.5: PRATTICO ARCHITECTURE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge green">BACKBONE</span>
+                    <h2 class="slide-title">Prattico 2025 &mdash; Architecture globale (Vue hélicoptère)</h2>
+                </div>
+                <!-- Helicopter view schema -->
+                <div
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 55vh;">
+                    <div
+                        style="display: flex; align-items: stretch; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; width: 100%;">
+
+                        <!-- DC Side -->
+                        <div
+                            style="flex: 1; padding: 1.2rem; background: rgba(245, 158, 11, 0.05); border: 2px dashed var(--accent-orange); border-radius: 16px; text-align: center; display: flex; flex-direction: column;">
+                            <h3
+                                style="color: var(--accent-orange); margin-bottom: 1rem; font-family: 'Fira Code', monospace; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.85rem;">
+                                Bus Continu (DC)</h3>
+
+                            <div
+                                style="display: flex; flex-direction: column; gap: 0.8rem; flex: 1; justify-content: center; align-items: center;">
+                                <div class="arch-box" style="border-left-color: var(--accent-green); width: 85%;">
+                                    <strong>Solaire (PV)</strong>
+                                </div>
+                                <div class="arch-box" style="border-left-color: var(--accent-blue); width: 85%;">
+                                    <strong>Stockage (BESS)</strong>
+                                </div>
+                                <div class="arch-box" style="border-left-color: var(--accent-purple); width: 85%;">
+                                    <strong>Charges DC</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interconnection -->
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; width: 160px;">
+                            <div style="font-size: 1.6rem; color: var(--text-secondary);">&harr;</div>
+                            <div class="arch-box"
+                                style="border-left-color: var(--phd-primary); width: 100%; border-width: 3px; font-weight: bold;">
+                                VSC<br><small style="font-weight: normal;">(Onduleur Central)</small>
+                            </div>
+                            <div style="font-size: 1.6rem; color: var(--text-secondary);">&harr;</div>
+                        </div>
+
+                        <!-- AC Side -->
+                        <div
+                            style="flex: 1; padding: 1.2rem; background: rgba(59, 130, 246, 0.05); border: 2px dashed var(--accent-blue); border-radius: 16px; text-align: center; display: flex; flex-direction: column;">
+                            <h3
+                                style="color: var(--accent-blue); margin-bottom: 1rem; font-family: 'Fira Code', monospace; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.85rem;">
+                                Bus Alternatif (AC)</h3>
+
+                            <div
+                                style="display: flex; flex-direction: column; gap: 0.8rem; flex: 1; justify-content: center; align-items: center;">
+                                <div class="arch-box" style="border-left-color: var(--phd-secondary); width: 85%;">
+                                    <strong>Éolienne (PMSG)</strong>
+                                </div>
+                                <div class="arch-box" style="border-left-color: var(--accent-cyan); width: 85%;">
+                                    <strong>Pile à Combustible</strong>
+                                </div>
+                                <div class="arch-box" style="border-left-color: var(--accent-orange); width: 85%;">
+                                    <strong>Charges AC<br>(Résid. & Comm.)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="background: rgba(30, 58, 95, 0.05); padding: 0.8rem 1.5rem; border-radius: 12px; border: 1px solid rgba(30, 58, 95, 0.15); width: 100%; text-align: center;">
+                        <strong
+                            style="color: var(--phd-primary); font-family: 'Fira Code', monospace; font-size: 0.85rem;">EMS
+                            (Energy Management System)</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.3rem;">Logique floue
+                            supervisant l'ensemble des composants (non reproduit dans notre modèle)</p>
+                    </div>
+                </div>
+                <div class="info-box mt-1">
+                    <p style="font-size:0.88rem;"><strong>Vue macroscopique :</strong> Le microgrid de Prattico est
+                        séparé en deux sous-réseaux (DC et AC) couplés par un convertisseur bidirectionnel. L'ensemble
+                        est pensé pour fonctionner en mode îloté total.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 8: PRATTICO COMPOSANTS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge green">BACKBONE</span>
+                    <h2 class="slide-title">Prattico 2025 &mdash; Composants et architecture</h2>
+                </div>
+                <p style="font-size:0.9rem; margin-bottom:0.8rem; color:var(--text-secondary);">
+                    Le papier modélise un microgrid îloté complet avec 6 sous-systèmes interconnectés.
+                </p>
+                <table>
+                    <tr>
+                        <th>Composant</th>
+                        <th>Spécification</th>
+                        <th>Modèle</th>
+                    </tr>
+                    <tr>
+                        <td><strong>PV</strong></td>
+                        <td>150 kWp</td>
+                        <td>Single-diode 5 param. (Eq. 8)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>BESS</strong></td>
+                        <td>200 kWh / 100 kW</td>
+                        <td>Rint : OCV(SOC) + R<sub>0</sub></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Éolienne</strong></td>
+                        <td>60 kW</td>
+                        <td>PMSG + convertisseur</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pile à combustible</strong></td>
+                        <td>20 kW PEMFC</td>
+                        <td>Electrochimique</td>
+                    </tr>
+                    <tr>
+                        <td><strong>VSC</strong></td>
+                        <td>150 kVA</td>
+                        <td>dq-frame, LC filter, grid-forming</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Charge DC</strong></td>
+                        <td>15 kW @ 48V</td>
+                        <td>Puissance constante</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Charge AC résidentielle</strong></td>
+                        <td>50 kW, PF &asymp; 1</td>
+                        <td>Resistive</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Charge AC commerciale</strong></td>
+                        <td>45 kW, PF = 0.9</td>
+                        <td>Inductive, 15 kVar</td>
+                    </tr>
+                </table>
+                <div class="warning-box">
+                    <div class="warning-box-title">À noter</div>
+                    <p style="font-size:0.88rem;">Le papier utilise Simscape Electrical (modélisation physique
+                        switching-level) avec un EMS fuzzy 80 règles. Nous ne reproduisons pas l'EMS ni les sources
+                        éolienne et pile à combustible.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: INTRO MODÈLE ==================== -->
+        <div class="slide section-slide">
+            <div class="section-lead" style="--section-accent: var(--accent-purple);">
+                <div class="section-lead-banner">
+                    <div class="section-lead-kicker">Partie III</div>
+                    <h1 class="section-lead-title">Modèle reproduit</h1>
+                    <p class="section-lead-text">
+                        Cette partie traduit le papier source en modèle de simulation et explicite la chaîne de
+                        décisions qui relie la publication à l'architecture implémentée.
+                    </p>
+                </div>
+                <div class="grid-3" style="margin-top:0.1rem;">
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Objectif scientifique</div>
+                        <p class="section-lead-card-text">
+                            Construire une version reproductible du microgrid en conservant les mécanismes
+                            déterminants pour l'équilibre énergétique et la régulation locale.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Approche</div>
+                        <p class="section-lead-card-text">
+                            Distinguer données du backbone et paramètres proxy, formaliser l'architecture, expliciter
+                            les équations et hiérarchiser les charges.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Résultat attendu</div>
+                        <p class="section-lead-card-text">
+                            Obtenir un modèle cohérent, traçable et exploitable comme support de validation puis
+                            d'extension.
+                        </p>
+                    </div>
+                </div>
+                <div class="section-lead-card" style="margin-top:1rem;">
+                    <div class="section-lead-card-title">Structure de la partie</div>
+                    <div class="section-map">
+                        <div class="section-map-item"><span class="section-map-index">19</span><span
+                                class="section-map-text">Nos choix de reproduction</span></div>
+                        <div class="section-map-item"><span class="section-map-index">20</span><span
+                                class="section-map-text">Architecture du modèle</span></div>
+                        <div class="section-map-item"><span class="section-map-index">21</span><span
+                                class="section-map-text">Matrice I/O &mdash; Vue d'ensemble</span></div>
+                        <div class="section-map-item"><span class="section-map-index">22</span><span
+                                class="section-map-text">PV + Boost MPPT &mdash; I/O d&eacute;taill&eacute;</span></div>
+                        <div class="section-map-item"><span class="section-map-index">23</span><span
+                                class="section-map-text">BESS + DC-DC &mdash; I/O d&eacute;taill&eacute;</span></div>
+                        <div class="section-map-item"><span class="section-map-index">24</span><span
+                                class="section-map-text">&Eacute;quations et param&egrave;tres</span></div>
+                        <div class="section-map-item"><span class="section-map-index">25</span><span
+                                class="section-map-text">Charges et priorisation</span></div>
+                        <div class="section-map-item"><span class="section-map-index">26</span><span
+                                class="section-map-text">Hypoth&egrave;ses et proxys</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: NOS CHOIX ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">DÉCISIONS</span>
+                    <h2 class="slide-title">Nos choix de reproduction</h2>
+                </div>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-title" style="color:var(--accent-green);">Ce qu'on reproduit</div>
+                        <ul class="feature-list">
+                            <li>Topologie hybride AC/DC îlotée</li>
+                            <li>PV 150 kWp, single-diode (Villalva 2009)</li>
+                            <li>BESS 200 kWh / 100 kW</li>
+                            <li>VSC 150 kVA avec droop P-f, Q-V</li>
+                            <li>3 charges avec priorités de délestage</li>
+                            <li>MPPT P&amp;O, bus DC 750V</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <div class="card-title" style="color:var(--accent-orange);">Ce qu'on simplifie ou exclut</div>
+                        <ul class="feature-list">
+                            <li>Droop moyen au lieu de dq-frame Simscape</li>
+                            <li>Éolienne 60 kW exclue (focus plante PV)</li>
+                            <li>Pile à combustible 20 kW exclue</li>
+                            <li>Fuzzy EMS exclu (hors scope)</li>
+                            <li>Pas de <code>100 &mu;s</code> au lieu de <code>20 &mu;s</code></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top:0;">
+                    <div class="success-box">
+                        <div class="success-box-title">Amélioration</div>
+                        <p style="font-size:0.88rem;">Notre batterie utilise un modèle <strong>2-RC Thevenin</strong>,
+                            plus sophistiqué que le modèle Rint du papier. Les dynamiques transitoires sont mieux
+                            capturées.</p>
+                    </div>
+                    <div class="warning-box">
+                        <div class="warning-box-title">Limitation assumée</div>
+                        <p style="font-size:0.88rem;">Le côté AC est en droop moyen (pas switching-level). Une migration
+                            vers Simscape dq-frame est prévue comme jalon suivant.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 10: ARCHITECTURE ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">ARCHITECTURE</span>
+                    <h2 class="slide-title">Architecture du modèle reproduit</h2>
+                </div>
+
+                <!-- Row 1: Sources -->
+                <div class="arch-row">
+                    <div class="arch-box green" style="min-width:160px;">
+                        <strong>PV 150 kWp</strong><br>
+                        <small>12s &times; 23p Jinko 550W</small>
+                    </div>
+                    <span class="arrow">&#8594;</span>
+                    <div class="arch-box" style="min-width:130px;">
+                        <strong>Boost MPPT</strong><br>
+                        <small>P&amp;O, L = 2 mH</small>
+                    </div>
+                    <span class="arrow">&#8594;</span>
+                    <div class="arch-box" style="min-width:170px; border-width:3px;">
+                        <strong>DC Link 750 V</strong><br>
+                        <small>C<sub>dc</sub> = 120 mF</small>
+                    </div>
+                    <span class="arrow">&#8592;</span>
+                    <div class="arch-box" style="min-width:130px;">
+                        <strong>Buck-Boost PI</strong><br>
+                        <small>Bidirectionnel</small>
+                    </div>
+                    <span class="arrow">&#8592;</span>
+                    <div class="arch-box green" style="min-width:160px;">
+                        <strong>BESS 200 kWh</strong><br>
+                        <small>512V, 2-RC, R<sub>0</sub>=0.04&Omega;</small>
+                    </div>
+                </div>
+
+                <!-- Arrow down from DC Link -->
+                <div class="arch-arrow">&#8595;</div>
+
+                <!-- Row 2: VSC -->
+                <div class="arch-row">
+                    <div class="arch-box" style="min-width:220px;">
+                        <strong>VSC Droop 150 kVA</strong><br>
+                        <small>P-f (m<sub>p</sub> = 6.67e-7) &middot; Q-V</small>
+                    </div>
+                </div>
+
+                <!-- Arrow down -->
+                <div class="arch-arrow">&#8595;</div>
+
+                <!-- Row 3: AC Bus -->
+                <div class="arch-row">
+                    <div class="arch-box" style="min-width:260px; border-color: var(--accent-purple);">
+                        <strong>AC Bus 230/400 V, 50 Hz</strong>
+                    </div>
+                </div>
+
+                <!-- Arrow down to loads -->
+                <div class="arch-arrow">&#8595; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#8595;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#8593;</div>
+
+                <!-- Row 4: Loads -->
+                <div class="arch-row">
+                    <div class="arch-box orange" style="min-width:140px;">
+                        <strong>P1 : 45 kW</strong><br>
+                        <small>AC inductif, PF=0.9</small><br>
+                        <small style="color:var(--accent-red);">Priorité MAX</small>
+                    </div>
+                    <div class="arch-box orange" style="min-width:140px;">
+                        <strong>P2 : 50 kW</strong><br>
+                        <small>AC résistif, PF=1</small><br>
+                        <small style="color:var(--accent-orange);">Stage 2</small>
+                    </div>
+                    <div class="arch-box orange" style="min-width:140px;">
+                        <strong>P3 : 15 kW</strong><br>
+                        <small>DC @ 48V</small><br>
+                        <small style="color:var(--accent-orange);">Stage 1 (1er délesté)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE IO-A: MATRICE I/O VUE D'ENSEMBLE ==================== -->
+        <div class="slide">
+            <div class="content-full">
+                <div class="slide-header">
+                    <span class="section-badge">I/O MATRIX</span>
+                    <h2 class="slide-title">Matrice Entr&eacute;es / Sorties &mdash; Vue d'ensemble</h2>
+                </div>
+                <!-- Compact flow diagram -->
+                <div
+                    style="display:flex;align-items:center;justify-content:center;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.65rem;">
+                    <div class="arch-box"
+                        style="min-width:100px;font-size:0.75rem;padding:0.35rem 0.55rem;border-color:var(--text-secondary);opacity:0.75;">
+                        <strong>Sc&eacute;narios</strong><br><small>G, T, soc&sub;&#8320;</small>
+                    </div>
+                    <span style="color:var(--accent-orange);font-size:1.1rem;">&#8594;</span>
+                    <div class="arch-box green" style="min-width:100px;font-size:0.75rem;padding:0.35rem 0.55rem;">
+                        <strong>PV + Boost</strong><br><small>&#8594; i_pv_dc</small>
+                    </div>
+                    <span style="color:var(--accent-orange);font-size:1.1rem;">&#8594;</span>
+                    <div class="arch-box"
+                        style="min-width:105px;font-size:0.75rem;padding:0.35rem 0.55rem;border-width:3px;">
+                        <strong>Bus DC 750 V</strong><br><small>C&middot;dVdc/dt</small>
+                    </div>
+                    <span style="color:var(--accent-orange);font-size:1.1rem;">&#8592;</span>
+                    <div class="arch-box green" style="min-width:100px;font-size:0.75rem;padding:0.35rem 0.55rem;">
+                        <strong>BESS + DC-DC</strong><br><small>&#8592; i_bat_dc</small>
+                    </div>
+                    <span style="color:var(--accent-orange);font-size:1.1rem;">&#8594;</span>
+                    <div class="arch-box" style="min-width:100px;font-size:0.75rem;padding:0.35rem 0.55rem;">
+                        <strong>Interface AC</strong><br><small>&#8594; v_ac, f</small>
+                    </div>
+                    <span style="color:var(--accent-orange);font-size:1.1rem;">&#8594;</span>
+                    <div class="arch-box orange" style="min-width:100px;font-size:0.75rem;padding:0.35rem 0.55rem;">
+                        <strong>Dispatcher</strong><br><small>&#8594; P1/P2/P3</small>
+                    </div>
+                </div>
+                <!-- I/O Table -->
+                <table style="font-size:0.77rem;">
+                    <tr>
+                        <th style="width:13%;">Bloc</th>
+                        <th style="width:18%;">&#201;tats internes</th>
+                        <th style="width:20%;">Entr&eacute;es</th>
+                        <th style="width:27%;">Sorties</th>
+                        <th style="width:22%;">&Eacute;quation principale</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Couche Sc&eacute;narios</strong></td>
+                        <td style="color:var(--text-secondary);">&mdash;</td>
+                        <td>signaux workspace</td>
+                        <td><code>G</code>, <code>T_cell</code>, <code>soc_init</code>, <code>P1_ac</code>,
+                            <code>P2_ac</code>, <code>P3_dc</code>
+                        </td>
+                        <td>injection par paliers</td>
+                    </tr>
+                    <tr style="background:rgba(16,185,129,0.04);">
+                        <td><strong>PV + Boost MPPT</strong></td>
+                        <td><code>v_pv</code>, <code>iL_pv</code>, <code>D_pv</code>, <code>v_prev</code>,
+                            <code>p_prev</code>
+                        </td>
+                        <td><code>G</code>, <code>T_cell</code>, <code>v_dc</code></td>
+                        <td><code>P_pv</code>, <code>i_pv_dc</code>, <code>I_pv</code>, <code>D_pv</code></td>
+                        <td>Diode unique + boost CCM + P&amp;O</td>
+                    </tr>
+                    <tr style="background:rgba(124,58,237,0.04);">
+                        <td><strong>BESS + DC-DC</strong></td>
+                        <td><code>soc</code>, <code>v_rc1</code>, <code>v_rc2</code>, <code>xi_vdc</code></td>
+                        <td><code>v_dc</code></td>
+                        <td><code>P_bat</code>, <code>i_bat_dc</code>, <code>SOC</code>, <code>v_bat</code>,
+                            <code>i_ref</code>, <code>D_bat</code>
+                        </td>
+                        <td>2-RC Thevenin + Coulomb + PI Vdc</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bus DC</strong></td>
+                        <td><code>v_dc</code></td>
+                        <td><code>i_pv_dc</code>, <code>i_bat_dc</code>, <code>i_inv</code>, <code>P_dc</code></td>
+                        <td><code>v_dc</code>, <code>i_dc_load</code></td>
+                        <td>C&middot;dV<sub>dc</sub>/dt =
+                            i<sub>pv</sub>+i<sub>bat</sub>&minus;i<sub>inv</sub>&minus;i<sub>dc</sub></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Interface AC</strong></td>
+                        <td><code>v_ac</code>, <code>f</code>, <code>p_meas</code>, <code>q_meas</code></td>
+                        <td><code>v_dc</code>, <code>P_ac</code>, <code>Q_ac</code></td>
+                        <td><code>v_ac</code>, <code>f</code>, <code>P_inv</code>, <code>i_inv</code>,
+                            <code>Q_meas</code>
+                        </td>
+                        <td>f&nbsp;=&nbsp;f&#8320;&minus;m<sub>p</sub>&middot;P &nbsp;|&nbsp;
+                            V&nbsp;=&nbsp;V&#8320;&minus;n<sub>q</sub>&middot;Q</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dispatcher charges</strong></td>
+                        <td style="color:var(--text-secondary);">&mdash;</td>
+                        <td><code>P1_dem</code>&hellip;<code>P3_dem</code>, <code>v_dc</code>, <code>soc</code></td>
+                        <td><code>P1_out</code>&hellip;<code>P3_out</code>, <code>S1</code>&ndash;<code>S3</code>,
+                            <code>shed_stage</code>
+                        </td>
+                        <td>r&egrave;gle : P3 &#8594; P2, P1 prot&eacute;g&eacute;e</td>
+                    </tr>
+                </table>
+                <div class="info-box" style="margin-top:0.5rem;">
+                    <p style="font-size:0.8rem;">Le bus DC est le n&oelig;ud central : tout courant produit ou
+                        consomm&eacute; transite par lui.
+                        <strong>PV et BESS ont les mod&egrave;les d'&eacute;tat les plus riches</strong> (5 et 4
+                        &eacute;tats respectivement) &mdash; ils font l'objet des deux diapositives suivantes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE IO-B: PV + BOOST MPPT DÉTAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge green">PV + BOOST</span>
+                    <h2 class="slide-title">PV + Boost MPPT &mdash; Entr&eacute;es &amp; Sorties
+                        d&eacute;taill&eacute;es</h2>
+                </div>
+                <!-- Internal states bar -->
+                <div
+                    style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.22);border-radius:10px;padding:0.45rem 0.8rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;">
+                    <span
+                        style="font-family:'Fira Code',monospace;font-size:0.62rem;font-weight:700;color:var(--accent-green);white-space:nowrap;text-transform:uppercase;letter-spacing:0.1em;">&Eacute;tats
+                        internes (5)</span>
+                    <span class="glossary-item"><span class="glossary-term">v_pv</span>tension panneau [V]</span>
+                    <span class="glossary-item"><span class="glossary-term">iL_pv</span>courant inductance boost
+                        [A]</span>
+                    <span class="glossary-item"><span class="glossary-term">D_pv</span>rapport cyclique boost
+                        [0&ndash;1]</span>
+                    <span class="glossary-item"><span class="glossary-term">v_prev</span>tension PV au pas t&minus;1
+                        [V]</span>
+                    <span class="glossary-item"><span class="glossary-term">p_prev</span>puissance PV au pas t&minus;1
+                        [W]</span>
+                </div>
+                <div class="grid-2">
+                    <!-- Inputs column -->
+                    <div class="card" style="border-top:3px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue);margin-bottom:0.55rem;">&#11015;
+                            Entr&eacute;es (3)</div>
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(37,99,235,0.05);border-radius:8px;border-left:3px solid var(--accent-blue);">
+                                <code>G</code> &mdash; <strong>Irradiance solaire</strong> [W/m&sup2;]<br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">Commande directement le
+                                    courant photog&eacute;n&eacute;r&eacute; I<sub>ph</sub>. Une chute soudaine (nuage)
+                                    r&eacute;duit I<sub>ph</sub> en ms et d&eacute;place le MPP vers une tension plus
+                                    basse. Plage sim : 0&ndash;1 000 W/m&sup2;.</span>
+                            </div>
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(37,99,235,0.05);border-radius:8px;border-left:3px solid var(--accent-blue);">
+                                <code>T_cell</code> &mdash; <strong>Temp&eacute;rature cellule</strong> [&deg;C]<br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">Influence
+                                    V<sub>t</sub>&nbsp;=&nbsp;nkT/q et donc V<sub>oc</sub>. Effet : &minus;0.45%/&deg;C
+                                    sur V<sub>oc</sub>. Un T<sub>cell</sub> &eacute;lev&eacute; r&eacute;duit la tension
+                                    au MPP mais augmente l&eacute;g&egrave;rement I<sub>ph</sub>.</span>
+                            </div>
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(37,99,235,0.05);border-radius:8px;border-left:3px solid var(--accent-blue);">
+                                <code>v_dc</code> &mdash; <strong>Tension bus DC</strong> [V]<br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">C&ocirc;t&eacute; sortie du
+                                    boost. D&eacute;termine la dynamique di<sub>L</sub>/dt : une variation de
+                                    v<sub>dc</sub> modifie le courant inject&eacute; et perturbe le point de
+                                    fonctionnement PV.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Outputs column -->
+                    <div class="card" style="border-top:3px solid var(--accent-green);">
+                        <div class="card-title" style="color:var(--accent-green);margin-bottom:0.55rem;">&#11014;
+                            Sorties (4)</div>
+                        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(16,185,129,0.05);border-radius:8px;border-left:3px solid var(--accent-green);">
+                                <code>P_pv</code> &mdash; <strong>Puissance PV produite</strong> [W]<br>
+                                <span
+                                    style="font-size:0.79rem;color:var(--text-secondary);">P<sub>pv</sub>&nbsp;=&nbsp;v<sub>pv</sub>&times;I<sub>pv</sub>.
+                                    Grandeur principale maximis&eacute;e par l'MPPT. Inject&eacute;e dans le bilan du
+                                    bus DC.</span>
+                            </div>
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(16,185,129,0.05);border-radius:8px;border-left:3px solid var(--accent-green);">
+                                <code>i_pv_dc</code> &mdash; <strong>Courant inject&eacute; au bus DC</strong> [A]<br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">Courant en sortie du boost
+                                    (c&ocirc;t&eacute; DC link). Participe directement au bilan nodal :
+                                    C&middot;dV<sub>dc</sub>/dt &nbsp;+=&nbsp; i<sub>pv_dc</sub>.</span>
+                            </div>
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(16,185,129,0.05);border-radius:8px;border-left:3px solid var(--accent-green);">
+                                <code>I_pv</code> &mdash; <strong>Courant panneau</strong> [A]<br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">Calcul&eacute; par
+                                    Newton-Raphson (mod&egrave;le diode unique). Utilis&eacute; pour mettre &agrave;
+                                    jour v_pv et P_pv.</span>
+                            </div>
+                            <div
+                                style="padding:0.45rem 0.6rem;background:rgba(16,185,129,0.05);border-radius:8px;border-left:3px solid var(--accent-green);">
+                                <code>D_pv</code> &mdash; <strong>Commande boost (P&amp;O)</strong><br>
+                                <span style="font-size:0.79rem;color:var(--text-secondary);">Rapport cyclique
+                                    calcul&eacute; par P&amp;O. Si &Delta;P&gt;0 et &Delta;V&gt;0 : D&larr;D+&delta;.
+                                    Sinon : D&larr;D&minus;&delta;. Converge vers D<sub>MPP</sub>.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Key equations -->
+                <div class="grid-3" style="margin-top:0.5rem;gap:0.5rem;">
+                    <div class="formula-block" data-label="Mod&egrave;le PV &mdash; Villalva 2009"
+                        style="font-size:0.82rem;">
+                        <em>I = I<sub>ph</sub> &minus;
+                            I<sub>0</sub>(e<sup>(V+IR<sub>s</sub>)/aV<sub>t</sub></sup>&minus;1) &minus;
+                            (V+IR<sub>s</sub>)/R<sub>sh</sub></em>
+                    </div>
+                    <div class="formula-block" data-label="Boost CCM moyen" style="font-size:0.82rem;">
+                        <em>di<sub>L</sub>/dt = (V<sub>pv</sub> &minus; (1&minus;D)&middot;V<sub>dc</sub>) / L</em>
+                    </div>
+                    <div class="formula-block" data-label="P&amp;O MPPT" style="font-size:0.82rem;">
+                        <em>&Delta;P &gt; 0 &amp;&amp; &Delta;V &gt; 0 &rArr; D &larr; D + &delta;</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE IO-C: BESS + DC-DC DÉTAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">BESS + DC-DC</span>
+                    <h2 class="slide-title">BESS + DC-DC bidirectionnel &mdash; Entr&eacute;es &amp; Sorties
+                        d&eacute;taill&eacute;es</h2>
+                </div>
+                <!-- Internal states bar -->
+                <div
+                    style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.22);border-radius:10px;padding:0.45rem 0.8rem;margin-bottom:0.65rem;display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;">
+                    <span
+                        style="font-family:'Fira Code',monospace;font-size:0.62rem;font-weight:700;color:var(--accent-purple);white-space:nowrap;text-transform:uppercase;letter-spacing:0.1em;">&Eacute;tats
+                        internes (4)</span>
+                    <span class="glossary-item"><span class="glossary-term">soc</span>&eacute;tat de charge
+                        [0&ndash;1]</span>
+                    <span class="glossary-item"><span class="glossary-term">v_rc1</span>tension branche RC1 &mdash;
+                        transitoire rapide [V]</span>
+                    <span class="glossary-item"><span class="glossary-term">v_rc2</span>tension branche RC2 &mdash;
+                        transitoire lent [V]</span>
+                    <span class="glossary-item"><span class="glossary-term">xi_vdc</span>int&eacute;grale PI
+                        r&eacute;gulation Vdc [V&middot;s]</span>
+                </div>
+                <div class="grid-2">
+                    <!-- Inputs column -->
+                    <div class="card" style="border-top:3px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue);margin-bottom:0.55rem;">&#11015;
+                            Entr&eacute;e (1)</div>
+                        <div
+                            style="padding:0.5rem 0.65rem;background:rgba(37,99,235,0.05);border-radius:8px;border-left:3px solid var(--accent-blue);margin-bottom:0.55rem;">
+                            <code>v_dc</code> &mdash; <strong>Tension bus DC mesur&eacute;e</strong> [V]<br>
+                            <span style="font-size:0.79rem;color:var(--text-secondary);">Seule entr&eacute;e externe. Le
+                                r&eacute;gulateur PI compare v<sub>dc</sub> &agrave; la consigne
+                                V<sub>dc,ref</sub>&nbsp;=&nbsp;750 V. L'erreur
+                                e&nbsp;=&nbsp;V<sub>ref</sub>&minus;v<sub>dc</sub> commande le courant de
+                                charge/d&eacute;charge.</span>
+                        </div>
+                        <div class="info-box" style="margin:0;padding:0.5rem 0.65rem;">
+                            <p style="font-size:0.79rem;">La BESS est l'<strong>organe r&eacute;gulateur du bus
+                                    DC</strong> : si v<sub>dc</sub> baisse (d&eacute;ficit PV), la batterie se
+                                d&eacute;charge et injecte du courant. Si v<sub>dc</sub> monte (exc&egrave;s PV), elle
+                                absorbe &eacute;nergie et charge.</p>
+                        </div>
+                    </div>
+                    <!-- Outputs column -->
+                    <div class="card" style="border-top:3px solid var(--accent-purple);">
+                        <div class="card-title" style="color:var(--accent-purple);margin-bottom:0.55rem;">&#11014;
+                            Sorties (6)</div>
+                        <div style="display:flex;flex-direction:column;gap:0.45rem;">
+                            <div
+                                style="padding:0.4rem 0.55rem;background:rgba(124,58,237,0.05);border-radius:8px;border-left:3px solid var(--accent-purple);">
+                                <code>SOC</code> &mdash; <strong>&Eacute;tat de charge estim&eacute;</strong> [%]<br>
+                                <span style="font-size:0.78rem;color:var(--text-secondary);">Int&eacute;gration
+                                    coulombienne du courant i<sub>bat</sub>. Bornes : 30%&ndash;90%. Entr&eacute;e du
+                                    dispatcher pour d&eacute;clencher le d&eacute;lestage stage 1.</span>
+                            </div>
+                            <div
+                                style="padding:0.4rem 0.55rem;background:rgba(124,58,237,0.05);border-radius:8px;border-left:3px solid var(--accent-purple);">
+                                <code>v_bat</code> &mdash; <strong>Tension terminale</strong> [V]<br>
+                                <span
+                                    style="font-size:0.78rem;color:var(--text-secondary);">V<sub>bat</sub>&nbsp;=&nbsp;OCV(SOC)&minus;I&middot;R<sub>0</sub>&minus;V<sub>rc1</sub>&minus;V<sub>rc2</sub>.
+                                    Capture les chutes r&eacute;sistive (R<sub>0</sub>) et les deux transitoires
+                                    RC.</span>
+                            </div>
+                            <div
+                                style="padding:0.4rem 0.55rem;background:rgba(124,58,237,0.05);border-radius:8px;border-left:3px solid var(--accent-purple);">
+                                <code>i_bat_dc</code> &mdash; <strong>Courant vers bus DC</strong> [A] &nbsp;
+                                <code>P_bat</code> &mdash; <strong>Puissance &eacute;chang&eacute;e</strong> [W]<br>
+                                <span style="font-size:0.78rem;color:var(--text-secondary);">P<sub>bat</sub>&gt;0 :
+                                    d&eacute;charge (injection DC). P<sub>bat</sub>&lt;0 : charge (absorption). Grandeur
+                                    principale du bilan &eacute;nerg&eacute;tique.</span>
+                            </div>
+                            <div
+                                style="padding:0.4rem 0.55rem;background:rgba(124,58,237,0.05);border-radius:8px;border-left:3px solid var(--accent-purple);">
+                                <code>i_ref</code> &mdash; <strong>Consigne courant PI</strong> [A] &nbsp;
+                                <code>D_bat</code> &mdash; <strong>Commande DC-DC</strong><br>
+                                <span style="font-size:0.78rem;color:var(--text-secondary);">i<sub>ref</sub> est la
+                                    sortie du PI Vdc. D<sub>bat</sub> est d&eacute;duit analytiquement par
+                                    r&eacute;solution du syst&egrave;me boost/buck pour atteindre
+                                    i<sub>ref</sub>.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Key equations -->
+                <div class="grid-3" style="margin-top:0.5rem;gap:0.5rem;">
+                    <div class="formula-block" data-label="Circuit 2-RC &mdash; Tremblay 2009"
+                        style="font-size:0.82rem;">
+                        <em>V<sub>bat</sub> = OCV(SOC) &minus; I&middot;R<sub>0</sub> &minus; V<sub>rc1</sub> &minus;
+                            V<sub>rc2</sub></em>
+                    </div>
+                    <div class="formula-block" data-label="Comptage coulombien" style="font-size:0.82rem;">
+                        <em>dSOC/dt = &minus;I<sub>bat</sub> / Q<sub>nom</sub></em>
+                    </div>
+                    <div class="formula-block" data-label="R&eacute;gulateur PI &mdash; bus DC"
+                        style="font-size:0.82rem;">
+                        <em>i<sub>ref</sub> = K<sub>p</sub>&middot;e + K<sub>i</sub>&middot;&xi; &nbsp;&nbsp; e =
+                            V<sub>dc,ref</sub> &minus; v<sub>dc</sub></em>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 11: ÉQUATIONS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">ÉQUATIONS</span>
+                    <h2 class="slide-title">Équations et paramètres</h2>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    14 équations tracées vers 5 sources académiques. Chaque équation est documentée dans
+                    <code>traceability_matrix.md</code>.
+                </p>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="formula-block" data-label="PV &mdash; Villalva 2009">
+                            <em>I<sub>pv</sub> = I<sub>ph</sub> &minus;
+                                I<sub>0</sub>(e<sup>(V+IR<sub>s</sub>)/(aV<sub>t</sub>)</sup>&minus;1) &minus;
+                                (V+IR<sub>s</sub>)/R<sub>sh</sub></em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0 0.6rem;">
+                            Relie courant et tension PV selon irradiance et température.
+                            <code>R<sub>s</sub>=0.156&Omega;</code>, <code>R<sub>sh</sub>=3886&Omega;</code>
+                        </p>
+
+                        <div class="formula-block" data-label="Boost &mdash; CCM moyen">
+                            <em>di<sub>L</sub>/dt = (V<sub>pv</sub> &minus; (1&minus;D)&middot;V<sub>dc</sub>) / L</em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0 0.6rem;">
+                            Convertisseur boost élève la tension PV vers le bus DC. <code>L = 2 mH</code>
+                        </p>
+
+                        <div class="formula-block" data-label="Droop &mdash; Guerrero 2011">
+                            <em>f = f<sub>0</sub> &minus; m<sub>p</sub> &middot; (P &minus; P<sub>ref</sub>)</em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0;">
+                            La fréquence chute proportionnellement à la puissance active.
+                            <code>m<sub>p</sub> = 6.67e-7 Hz/W</code>
+                        </p>
+                    </div>
+                    <div>
+                        <div class="formula-block" data-label="Batterie &mdash; 2-RC Thevenin">
+                            <em>V<sub>bat</sub> = OCV(SOC) &minus; I&middot;R<sub>0</sub> &minus; V<sub>rc1</sub>
+                                &minus; V<sub>rc2</sub></em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0 0.6rem;">
+                            Modèle équivalent avec OCV dépendant du SOC et 2 branches RC.
+                            <code>R<sub>0</sub> = 0.04&Omega;</code>, <code>Q = 200 kWh</code>
+                        </p>
+
+                        <div class="formula-block" data-label="DC-Link &mdash; Bilan nodal">
+                            <em>C&middot;dV<sub>dc</sub>/dt = i<sub>pv</sub> + i<sub>bat</sub> &minus; i<sub>inv</sub>
+                                &minus; i<sub>dc</sub></em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0 0.6rem;">
+                            Le bus DC équilibre les courants des sources et des charges.
+                            <code>C<sub>dc</sub> = 120 mF</code>
+                        </p>
+
+                        <div class="formula-block" data-label="SOC &mdash; Coulomb counting">
+                            <em>dSOC/dt = &minus;I<sub>bat</sub> / Q<sub>nom</sub></em>
+                        </div>
+                        <p style="font-size:0.82rem; color:var(--text-secondary); margin: 0.3rem 0;">
+                            Intégration du courant pour estimer l'état de charge.
+                            Bornes : <code>30% &le; SOC &le; 90%</code>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 12: CHARGES ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">CHARGES</span>
+                    <h2 class="slide-title">Charges et politique de priorisation</h2>
+                </div>
+                <table>
+                    <tr>
+                        <th>Charge</th>
+                        <th>Puissance</th>
+                        <th>Type</th>
+                        <th>PF</th>
+                        <th>Priorité</th>
+                    </tr>
+                    <tr>
+                        <td><strong>P1</strong> &mdash; Commerciale</td>
+                        <td>45 kW + 15 kVar</td>
+                        <td>AC inductif</td>
+                        <td>0.9</td>
+                        <td style="color:var(--accent-red); font-weight:700;">TOUJOURS alimentée</td>
+                    </tr>
+                    <tr>
+                        <td><strong>P2</strong> &mdash; Résidentielle</td>
+                        <td>50 kW</td>
+                        <td>AC résistif</td>
+                        <td>1.0</td>
+                        <td style="color:var(--accent-orange); font-weight:600;">Délestée stage 2</td>
+                    </tr>
+                    <tr>
+                        <td><strong>P3</strong> &mdash; DC auxiliaire</td>
+                        <td>15 kW @ 48V</td>
+                        <td>DC constant power</td>
+                        <td>&mdash;</td>
+                        <td style="color:var(--accent-orange); font-weight:600;">Délestée stage 1</td>
+                    </tr>
+                </table>
+                <div class="grid-2 mt-1">
+                    <div class="card">
+                        <div class="card-title">Stage 1 &mdash; Délestage P3</div>
+                        <p class="card-text">Déclenche quand <code>SOC &le; 35%</code> ou
+                            <code>V<sub>dc</sub> &le; 735 V</code>.<br>P3 est déconnectée. P1 et P2 restent alimentées.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Stage 2 &mdash; Délestage P3 + P2</div>
+                        <p class="card-text">Déclenche quand <code>SOC &le; 32%</code> ou
+                            <code>V<sub>dc</sub> &le; 725 V</code>.<br>P3 et P2 sont déconnectées. <strong>P1 reste
+                                toujours alimentée.</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 13: HYPOTHÈSES ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">HYPOTHÈSES</span>
+                    <h2 class="slide-title">Source directe vs proxy executable</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.8rem;">
+                    Transparence : ce qui vient directement du papier et ce qui est approximé par des proxys documentés.
+                </p>
+                <div class="grid-2">
+                    <div class="card" style="border-left: 4px solid var(--accent-green);">
+                        <div class="card-title" style="color:var(--accent-green);">Source directe (Prattico)</div>
+                        <ul class="feature-list">
+                            <li>Topologie hybride AC/DC îlotée</li>
+                            <li>PV = 150 kWp</li>
+                            <li>BESS = 200 kWh / 100 kW</li>
+                            <li>VSC = 150 kVA</li>
+                            <li>DC bus = 750 V</li>
+                            <li>AC bus = 230/400 V, 50 Hz</li>
+                            <li>3 charges : 45 kW, 50 kW, 15 kW</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--accent-orange);">
+                        <div class="card-title" style="color:var(--accent-orange);">Proxy executable</div>
+                        <ul class="feature-list">
+                            <li>Coefficients PV : module Jinko 550W (même gamme)</li>
+                            <li>Batterie : LiFePO4 proxy, valeurs R1/C1/R2/C2</li>
+                            <li>Pertes onduleur : loi quadratique en S</li>
+                            <li>Côté AC : droop moyen (pas Simscape)</li>
+                            <li>Seuils délestage : règle du dépôt</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Documentation</div>
+                    <p style="font-size:0.85rem;">Chaque proxy est documenté dans <code>ASSUMPTIONS.md</code>. Les
+                        équations sont tracées dans <code>traceability_matrix.md</code>. Si les paramètres originaux
+                        deviennent disponibles, ils peuvent être substitués sans changer l'architecture.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: INTRO VALIDATION ==================== -->
+        <div class="slide section-slide">
+            <div class="section-lead" style="--section-accent: var(--accent-orange);">
+                <div class="section-lead-banner">
+                    <div class="section-lead-kicker">Partie IV</div>
+                    <h1 class="section-lead-title">Validation et suite</h1>
+                    <p class="section-lead-text">
+                        Cette partie examine la crédibilité du modèle par des scénarios représentatifs, interprète les
+                        écarts et en déduit une feuille de route scientifique.
+                    </p>
+                </div>
+                <div class="grid-3" style="margin-top:0.1rem;">
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Objectif scientifique</div>
+                        <p class="section-lead-card-text">
+                            Évaluer le premier niveau de validité fonctionnelle du modèle au regard des scénarios, des
+                            bornes électriques et des comportements attendus.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Approche</div>
+                        <p class="section-lead-card-text">
+                            Construire des cas d'essai contrastés, lire les réponses sur les variables clés et relier
+                            les écarts aux hypothèses de modélisation.
+                        </p>
+                    </div>
+                    <div class="section-lead-card">
+                        <div class="section-lead-card-title">Résultat attendu</div>
+                        <p class="section-lead-card-text">
+                            Formuler un verdict argumenté sur la fidélité atteinte, hiérarchiser les limites et
+                            proposer les prolongements les plus utiles.
+                        </p>
+                    </div>
+                </div>
+                <div class="section-lead-card" style="margin-top:1rem;">
+                    <div class="section-lead-card-title">Structure de la partie</div>
+                    <div class="section-map">
+                        <div class="section-map-item"><span class="section-map-index">25</span><span
+                                class="section-map-text">Scénarios de validation</span></div>
+                        <div class="section-map-item"><span class="section-map-index">26</span><span
+                                class="section-map-text">Résultats de simulation</span></div>
+                        <div class="section-map-item"><span class="section-map-index">27</span><span
+                                class="section-map-text">Gaps et pistes d'amélioration</span></div>
+                        <div class="section-map-item"><span class="section-map-index">28</span><span
+                                class="section-map-text">Plan de travail</span></div>
+                        <div class="section-map-item"><span class="section-map-index">29</span><span
+                                class="section-map-text">Conclusion et questions</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18: SCÉNARIOS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">VALIDATION</span>
+                    <h2 class="slide-title">Scénarios de validation</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    Cinq scénarios reproductibles, tous définis dans <code>run_sim.m</code> et exécutables en une
+                    commande.
+                </p>
+                <table>
+                    <tr>
+                        <th>Scénario</th>
+                        <th>Description</th>
+                        <th>Condition</th>
+                        <th>Objectif</th>
+                    </tr>
+                    <tr>
+                        <td><strong>S1</strong> normal</td>
+                        <td>Conditions nominales</td>
+                        <td>G=1000 W/m&sup2;, SOC=70%</td>
+                        <td>Vérifier le régime établi</td>
+                    </tr>
+                    <tr>
+                        <td><strong>S2</strong> cloud_drop</td>
+                        <td>Chute irradiance 80%</td>
+                        <td>G: 1000&rarr;200 à t=5s</td>
+                        <td>Tester MPPT + compensation batterie</td>
+                    </tr>
+                    <tr>
+                        <td><strong>S3</strong> load_step</td>
+                        <td>Échelon de charge</td>
+                        <td>P2: 50&rarr;65 kW</td>
+                        <td>Tester régulation droop</td>
+                    </tr>
+                    <tr>
+                        <td><strong>S4</strong> low_soc</td>
+                        <td>Démarrage SOC bas</td>
+                        <td>SOC initial = 34%</td>
+                        <td>Tester délestage stage 1</td>
+                    </tr>
+                    <tr>
+                        <td><strong>S5</strong> priority_shedding</td>
+                        <td>SOC très bas</td>
+                        <td>SOC initial = 31%</td>
+                        <td>Tester délestage stages 1 + 2</td>
+                    </tr>
+                </table>
+                <div class="success-box mt-1">
+                    <div class="success-box-title">Reproductibilité</div>
+                    <p style="font-size:0.85rem;">Une seule commande MATLAB : <code>run_sim(true)</code> exécute les 5
+                        scénarios et génère les figures et le CSV de résultats.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 15: RÉSULTATS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge orange">RÉSULTATS</span>
+                    <h2 class="slide-title">Résultats de simulation</h2>
+                </div>
+
+                <div class="grid-2">
+                    <div class="text-center">
+                        <img src="../results/S1_overview.png" alt="S1 Nominal" class="img-result"
+                            onerror="this.outerHTML='<div class=\'card text-center\'><p>S1_overview.png</p><p class=\'card-text\'>Image disponible dans results/</p></div>'">
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.3rem;">S1 &mdash; Scénario
+                            nominal</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="../results/S5_overview.png" alt="S5 Shedding" class="img-result"
+                            onerror="this.outerHTML='<div class=\'card text-center\'><p>S5_overview.png</p><p class=\'card-text\'>Image disponible dans results/</p></div>'">
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.3rem;">S5 &mdash; Priority
+                            shedding</p>
+                    </div>
+                </div>
+
+                <div class="grid-4 mt-1">
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size:1.4rem;">738&ndash;793V</div>
+                        <div class="metric-label">V<sub>dc</sub> (bande op.)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size:1.4rem;">227.7V</div>
+                        <div class="metric-label">V<sub>ac</sub> min (&gt;207)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size:1.4rem;">49.93Hz</div>
+                        <div class="metric-label">f min (&gt;49.5)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" style="font-size:1.4rem;">111kVA</div>
+                        <div class="metric-label">S<sub>inv</sub> / 150 kVA</div>
+                    </div>
+                </div>
+
+                <div class="success-box mt-1">
+                    <div class="success-box-title">Verdict</div>
+                    <p style="font-size:0.85rem;">S1-S3 : PASS complet. S4-S5 : PASS opérationnel (WARN Vdc cible car
+                        scénarios de stress volontaires). Délestage correct : P3 d'abord, puis P2, P1 toujours
+                        maintenue.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE CONTRIB: DÉMARCHE DE REPRODUCTION ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge green">CONTRIBUTION</span>
+                    <h2 class="slide-title">D&eacute;marche de reproduction document&eacute;e</h2>
+                </div>
+                <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:0.8rem;line-height:1.55;">
+                    Reproduire un papier ne se r&eacute;duit pas &agrave; impl&eacute;menter ses &eacute;quations.
+                    La valeur r&eacute;side dans la <strong>compr&eacute;hension</strong> des choix, leur
+                    <strong>justification</strong> et leur <strong>tra&ccedil;abilit&eacute;</strong>.
+                </p>
+                <div class="grid-2">
+                    <!-- Card 1: Compréhension -->
+                    <div class="card" style="border-left:4px solid var(--accent-blue);">
+                        <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.4rem;">
+                            <span style="font-size:1.4rem;">&#128269;</span>
+                            <div class="card-title" style="margin:0;color:var(--accent-blue);">Lecture critique du
+                                backbone</div>
+                        </div>
+                        <ul class="feature-list" style="font-size:0.83rem;">
+                            <li>14 &eacute;quations identifi&eacute;es et class&eacute;es dans Prattico 2025</li>
+                            <li>Chaque hypoth&egrave;se v&eacute;rifi&eacute;e contre Villalva 2009, Tremblay 2009,
+                                Guerrero 2011</li>
+                            <li>Param&egrave;tres non publi&eacute;s reconstruits par proxy document&eacute;</li>
+                        </ul>
+                    </div>
+                    <!-- Card 2: Choix justifiés -->
+                    <div class="card" style="border-left:4px solid var(--accent-green);">
+                        <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.4rem;">
+                            <span style="font-size:1.4rem;">&#9878;</span>
+                            <div class="card-title" style="margin:0;color:var(--accent-green);">Choix justifi&eacute;s
+                                et assum&eacute;s</div>
+                        </div>
+                        <ul class="feature-list" style="font-size:0.83rem;">
+                            <li><strong>Am&eacute;lioration</strong> : batterie <code>2-RC Thevenin</code> vs
+                                <code>Rint</code> du backbone &rarr; meilleure capture des transitoires
+                            </li>
+                            <li><strong>Simplification assum&eacute;e</strong> : droop moyen vs dq-frame Simscape &rarr;
+                                limitation document&eacute;e</li>
+                            <li><strong>Exclusions justifi&eacute;es</strong> : &eacute;olienne, FC, fuzzy EMS &rarr;
+                                hors scope, non requis pour la plante de r&eacute;f&eacute;rence</li>
+                        </ul>
+                    </div>
+                    <!-- Card 3: Traçabilité -->
+                    <div class="card" style="border-left:4px solid var(--accent-purple);">
+                        <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.4rem;">
+                            <span style="font-size:1.4rem;">&#128279;</span>
+                            <div class="card-title" style="margin:0;color:var(--accent-purple);">
+                                Tra&ccedil;abilit&eacute; source &rarr; param&egrave;tre</div>
+                        </div>
+                        <ul class="feature-list" style="font-size:0.83rem;">
+                            <li><code>params.m</code> : 11 familles, chaque valeur comment&eacute;e avec source et
+                                &eacute;quation</li>
+                            <li><code>traceability_matrix.md</code> : 14 &eacute;quations &rarr; 5 sources primaires
+                            </li>
+                            <li><code>ASSUMPTIONS.md</code> : chaque proxy et simplification list&eacute;(e)
+                                explicitement</li>
+                        </ul>
+                    </div>
+                    <!-- Card 4: Reproductibilité -->
+                    <div class="card" style="border-left:4px solid var(--accent-orange);">
+                        <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.4rem;">
+                            <span style="font-size:1.4rem;">&#9654;</span>
+                            <div class="card-title" style="margin:0;color:var(--accent-orange);">Reproductible en une
+                                commande</div>
+                        </div>
+                        <ul class="feature-list" style="font-size:0.83rem;">
+                            <li><code>run_sim(true)</code> &rarr; 5 sc&eacute;narios, 5 graphes, 1 CSV de
+                                conformit&eacute;</li>
+                            <li><code>scenario_summary.csv</code> &rarr; PASS / WARN contre les bornes IEEE 1547</li>
+                            <li>Tout param&egrave;tre modifiable dans <code>params.m</code> sans toucher au
+                                mod&egrave;le</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Demo guide + closing statement -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-top:0.65rem;">
+                    <div class="info-box" style="margin:0;padding:0.6rem 0.8rem;">
+                        <div class="info-box-title">&#127909; Guide d&eacute;mo (5 min)</div>
+                        <ol style="font-size:0.8rem;padding-left:1.1rem;line-height:1.75;margin:0;">
+                            <li><code>params.m</code> &rarr; structure + tracer une valeur vers sa source</li>
+                            <li><code>traceability_matrix.md</code> &rarr; pointer 2&ndash;3 &eacute;quations</li>
+                            <li><code>run_sim(true)</code> &rarr; S1 nominal + S5 d&eacute;lestage</li>
+                            <li><code>scenario_summary.csv</code> &rarr; PASS / WARN IEEE</li>
+                        </ol>
+                    </div>
+                    <div class="success-box"
+                        style="margin:0;padding:0.6rem 0.8rem;display:flex;flex-direction:column;justify-content:center;">
+                        <div class="success-box-title">Positionnement</div>
+                        <p style="font-size:0.82rem;line-height:1.5;">Un mod&egrave;le de plante
+                            <strong>d&eacute;fendable</strong> n'est pas l'objectif &mdash; c'est le
+                            <strong>socle</strong>.
+                            L'objectif de la th&egrave;se : int&eacute;grer les <strong>garanties formelles de
+                                s&ucirc;ret&eacute;</strong> (CBF, ensembles invariants) sur ce socle.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 16: GAPS ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">PERSPECTIVES</span>
+                    <h2 class="slide-title">Gaps identifiés et pistes d'amélioration</h2>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:0.6rem;">
+                    Six axes d'amélioration identifiés à partir de l'analyse du backbone et de l'état de l'art.
+                </p>
+                <div class="grid-3">
+                    <div class="card">
+                        <span class="card-icon">&#9889;</span>
+                        <div class="card-title">Interface AC</div>
+                        <p class="card-text">Migrer du droop moyen vers un modèle Simscape dq-frame avec LC filter et
+                            commutation réelle.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#128295;</span>
+                        <div class="card-title">Validation expérimentale</div>
+                        <p class="card-text">Passer de la simulation pure à la validation Hardware-in-the-Loop via
+                            Speedgoat (CHIL/PHIL).</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#127777;</span>
+                        <div class="card-title">Modèle thermique</div>
+                        <p class="card-text">Intégrer les effets de température sur le rendement PV et la dégradation
+                            batterie sur les longs horizons.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#129302;</span>
+                        <div class="card-title">Gestion d'énergie</div>
+                        <p class="card-text">Explorer des EMS avancés (MPC, optimisation) au-delà du fuzzy ad-hoc à 80
+                            règles de Prattico.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#128065;</span>
+                        <div class="card-title">Estimation d'état</div>
+                        <p class="card-text">Ajouter des observateurs en ligne pour construire un vrai Digital Twin avec
+                            synchronisation temps réel.</p>
+                    </div>
+                    <div class="card">
+                        <span class="card-icon">&#128737;</span>
+                        <div class="card-title">Sûreté formelle</div>
+                        <p class="card-text">Intégrer des garanties hard-constraint (barrier functions, invariant sets)
+                            pour assurer le respect permanent des limites.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 17: PLAN DE TRAVAIL ==================== -->
+        <div class="slide">
+            <div class="content-single">
+                <div class="slide-header">
+                    <span class="section-badge">ROADMAP</span>
+                    <h2 class="slide-title">Plan de travail</h2>
+                </div>
+                <div class="grid-2">
+                    <div class="card" style="border-left: 4px solid var(--accent-green);">
+                        <div class="card-title" style="color:var(--accent-green);">Réalisé</div>
+                        <ul class="feature-list">
+                            <li>Modèle complet : 14 équations tracées vers 5 sources</li>
+                            <li>5 scénarios valides, conformité IEEE</li>
+                            <li>Batterie 2-RC (amélioration vs backbone Rint)</li>
+                            <li>Jeu de paramètres structuré dans <code>params.m</code></li>
+                            <li>Documentation complète (traçabilité, hypothèses, I/O)</li>
+                            <li>Modèle reproductible en une commande</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                        <div class="card-title" style="color:var(--accent-blue);">Prochaines étapes</div>
+                        <ul class="feature-list">
+                            <li>Migration AC vers Simscape dq-frame</li>
+                            <li>Intégration sûreté formelle</li>
+                            <li>Validation HIL (Speedgoat)</li>
+                            <li>Couplage estimateur d'état (Digital Twin)</li>
+                            <li>Extension des scénarios de test</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box mt-1">
+                    <div class="info-box-title">Priorité immédiate</div>
+                    <p style="font-size:0.88rem;">La plante de référence est opérationnelle. Le prochain jalon est
+                        l'amélioration du réalisme de l'interface AC, puis l'intégration progressive des couches de
+                        commande avancées.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SLIDE 18: CONCLUSION ==================== -->
+        <div class="slide">
+            <div class="content-full text-center">
+                <h1 class="hero-title" style="font-size: 2.2rem;">Conclusion</h1>
+                <div class="grid-4 mt-2">
+                    <div class="metric-card">
+                        <div class="metric-value">150 kWp</div>
+                        <div class="metric-label">Photovoltaïque</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">200 kWh</div>
+                        <div class="metric-label">Stockage BESS</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">14</div>
+                        <div class="metric-label">Équations tracées</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5</div>
+                        <div class="metric-label">Scénarios valides</div>
+                    </div>
+                </div>
+                <div class="success-box mt-2" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <div class="success-box-title">Bilan</div>
+                    <p style="font-size:0.92rem;">Le modèle est reproductible en une commande, avec un jeu de paramètres
+                        structuré et tracé vers 5 sources académiques. La plante de référence est prête pour
+                        l'intégration progressive de couches de commande avancées.</p>
+                </div>
+                <p
+                    style="margin-top: 2rem; font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--phd-primary);">
+                    Questions ?
+                </p>
+                <p style="margin-top: 0.8rem; color: var(--text-secondary); font-size: 0.85rem;">
+                    Oussama AKIR &mdash; Mars 2026
+                </p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav>
+        <button class="nav-btn" onclick="prevSlide()" title="Précédent (&larr;)">&larr;</button>
+        <div class="nav-separator"></div>
+        <span class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">29</span></span>
+        <div class="nav-separator"></div>
+        <button class="nav-btn" onclick="nextSlide()" title="Suivant (&rarr;)">&rarr;</button>
+    </nav>
+
+    <div class="glossary-bar" id="glossary-bar">
+        <div class="glossary-label">Repères</div>
+        <div class="glossary-items" id="glossary-items"></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const headerContext = document.getElementById('header-context');
+        const glossaryBar = document.getElementById('glossary-bar');
+        const glossaryItems = document.getElementById('glossary-items');
+        let currentSlide = 0;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        const baseGlossary = {
+            0: [
+                { term: 'AC/DC', text: 'Alternatif / continu : deux natures de bus électriques dans le microgrid.' }
+            ],
+            1: [
+                { term: 'AC/DC', text: 'Alternatif / continu : les deux côtés du microgrid présentés dans le plan.' }
+            ],
+            2: [
+                { term: 'IEEE', text: 'Organisme qui publie les normes techniques utilisées comme référence.' },
+                { term: 'MG', text: 'Microgrid : réseau local capable de fonctionner de façon autonome.' }
+            ],
+            3: [
+                { term: 'SOC', text: 'State of Charge : niveau de charge restant dans la batterie.' },
+                { term: 'Vph', text: 'Tension de phase mesurée côté AC.' },
+                { term: 'DC-link', text: 'Bus continu central qui relie les sources et le convertisseur.' }
+            ],
+            4: [
+                { term: 'DER', text: 'Distributed Energy Resources : sources d’énergie distribuées.' },
+                { term: 'MG', text: 'Microgrid : réseau local qui peut rester stable sans réseau principal.' },
+                { term: 'Vac', text: 'Tension côté alternatif, donc sur le bus AC.' },
+                { term: 'Vdc', text: 'Tension côté continu, donc sur le bus DC.' },
+                { term: 'SOC', text: 'Niveau de charge de la batterie.' },
+                { term: 'f', text: 'Fréquence électrique du système AC.' }
+            ],
+            5: [
+                { term: 'PV', text: 'Photovoltaïque : production électrique à partir du solaire.' },
+                { term: 'P-f', text: 'Lien entre puissance active et fréquence dans le droop control.' },
+                { term: 'Q-V', text: 'Lien entre puissance réactive et tension dans le droop control.' }
+            ],
+            6: [
+                { term: 'DT', text: 'Digital Twin : jumeau numérique synchronisé avec le système réel.' },
+                { term: 'EMS', text: 'Energy Management System : logique de gestion énergétique.' }
+            ],
+            7: [
+                { term: 'PV', text: 'Bloc solaire retenu comme source principale du backbone.' },
+                { term: 'BESS', text: 'Battery Energy Storage System : système de stockage batterie.' },
+                { term: 'VSC', text: 'Voltage Source Converter : convertisseur pilotant le bus AC.' }
+            ],
+            8: [
+                { term: 'PV', text: 'Chaîne photovoltaïque du papier de référence.' },
+                { term: 'SOC', text: 'État de charge utilisé pour modéliser la batterie.' },
+                { term: 'VSI', text: 'Voltage Source Inverter : onduleur à source de tension.' },
+                { term: 'VSC', text: 'Convertisseur à source de tension utilisé côté AC.' },
+                { term: 'OA', text: 'Open Access : article accessible librement.' }
+            ],
+            9: [
+                { term: 'EMS', text: 'Gestionnaire d’énergie utilisé dans le papier Prattico.' },
+                { term: 'PV', text: 'Source photovoltaïque intégrée au modèle complet.' },
+                { term: 'AC/DC', text: 'Architecture hybride avec un bus alternatif et un bus continu.' }
+            ],
+            10: [
+                { term: 'VSC', text: 'Convertisseur bidirectionnel liant les bus continu et alternatif.' }
+            ],
+            11: [
+                { term: 'BESS', text: 'Stockage batterie chargé d’absorber ou fournir l’énergie.' },
+                { term: 'PMSG', text: 'Permanent Magnet Synchronous Generator : génératrice synchrone à aimants permanents.' },
+                { term: 'PEMFC', text: 'Pile à combustible à membrane échangeuse de protons.' },
+                { term: 'PF', text: 'Power Factor : facteur de puissance de la charge.' }
+            ],
+            12: [
+                { term: 'MPPT', text: 'Maximum Power Point Tracking : recherche du point de puissance max du PV.' },
+                { term: 'VSC', text: 'Convertisseur central qui pilote la partie AC du modèle.' },
+                { term: 'SOC', text: 'Niveau de charge suivi pour piloter la batterie.' }
+            ],
+            13: [
+                { term: 'MPPT', text: 'Algorithme qui ajuste le fonctionnement PV pour capter plus d’énergie.' },
+                { term: 'EMS', text: 'Gestion énergétique non reproduite dans cette version.' },
+                { term: 'dq-frame', text: 'Repère tournant utilisé dans certains modèles de convertisseurs AC.' }
+            ],
+            14: [
+                { term: 'MPPT', text: 'Commande du convertisseur boost côté photovoltaïque.' },
+                { term: 'BESS', text: 'Stockage batterie relié au bus DC par un convertisseur bidirectionnel.' },
+                { term: 'VSC', text: 'Convertisseur qui alimente et régule le bus AC.' },
+                { term: 'PF', text: 'Facteur de puissance des charges AC.' }
+            ],
+            15: [
+                { term: 'OCV', text: 'Open Circuit Voltage : tension batterie à vide.' },
+                { term: 'SOC', text: 'État de charge qui influence le comportement batterie.' },
+                { term: 'RC', text: 'Branche résistance-condensateur pour capturer les transitoires.' },
+                { term: 'Vdc', text: 'Tension du bus continu suivie dans les équations.' }
+            ],
+            16: [
+                { term: 'PF', text: 'Facteur de puissance des charges AC.' },
+                { term: 'SOC', text: 'Niveau de charge qui déclenche les seuils de délestage.' },
+                { term: 'Vdc', text: 'Tension du bus DC utilisée comme critère de protection.' }
+            ],
+            17: [
+                { term: 'PV', text: 'Partie solaire conservée du papier source.' },
+                { term: 'BESS', text: 'Stockage batterie reproduit avec des paramètres proxy.' },
+                { term: 'VSC', text: 'Convertisseur AC gardé comme élément central de l’architecture.' }
+            ],
+            18: [
+                { term: 'HIL', text: 'Hardware-in-the-Loop : validation avec du matériel dans la boucle.' },
+                { term: 'CHIL', text: 'Controller HIL : seul le contrôleur réel est intégré à la boucle.' },
+                { term: 'PHIL', text: 'Power HIL : échange de puissance avec un équipement réel.' }
+            ],
+            19: [
+                { term: 'SOC', text: 'Niveau de charge initial utilisé pour définir certains scénarios.' },
+                { term: 'MPPT', text: 'Commande PV testée lors des variations d’irradiance.' }
+            ],
+            20: [
+                { term: 'Vdc', text: 'Tension minimale et maximale observée sur le bus continu.' },
+                { term: 'Vac', text: 'Tension côté AC mesurée au point de livraison local.' },
+                { term: 'Sinv', text: 'Puissance apparente vue par l’onduleur ou le convertisseur.' },
+                { term: 'f', text: 'Fréquence électrique mesurée sur le bus AC.' }
+            ],
+            21: [
+                { term: 'LC', text: 'Filtre inductance-condensateur pour lisser la sortie d’un convertisseur.' },
+                { term: 'HIL', text: 'Validation avancée avec matériel réel dans la boucle.' },
+                { term: 'EMS', text: 'Gestion énergétique plus avancée à intégrer ensuite.' }
+            ],
+            22: [
+                { term: 'HIL', text: 'Étape prévue pour rapprocher la simulation du réel.' },
+                { term: 'dq-frame', text: 'Représentation choisie pour raffiner le modèle AC.' },
+                { term: 'Digital Twin', text: 'Jumeau numérique enrichi par estimation d’état et synchronisation.' }
+            ],
+            23: [
+                { term: 'PV', text: 'Source photovoltaïque dimensionnée à 150 kWp dans la plante.' },
+                { term: 'BESS', text: 'Système de stockage batterie dimensionné à 200 kWh.' },
+                { term: 'AC/DC', text: 'Architecture hybride finale validée dans cette reproduction.' }
+            ]
+        };
+
+        const slideGlossary = {
+            0: baseGlossary[0],
+            1: baseGlossary[1],
+            2: baseGlossary[2],
+            3: baseGlossary[3],
+            4: baseGlossary[4],
+            5: [
+                { term: 'DER', text: 'Distributed Energy Resources : production ou stockage raccordé au microgrid.' },
+                { term: 'Cat. II', text: 'Niveau intermédiaire de tenue réseau retenu pour cadrer les bornes de tension.' },
+                { term: 'Ride-through', text: 'Capacité à rester connecté pendant une perturbation plutôt que se déconnecter.' }
+            ],
+            6: [
+                { term: 'MEMS', text: 'Microgrid Energy Management System : couche de supervision et de dispatch.' },
+                { term: 'SCADA', text: 'Supervision industrielle pour surveiller et piloter le microgrid.' },
+                { term: 'DER', text: 'Ensemble des sources et stockages coordonnés par le contrôleur microgrid.' }
+            ],
+            7: [
+                { term: 'SIL', text: 'Software-in-the-Loop : plante et contrôleur entièrement simulés.' },
+                { term: 'CHIL', text: 'Controller HIL : contrôleur réel branché sur une plante simulée.' },
+                { term: 'PHIL', text: 'Power HIL : échange de puissance avec un équipement réel.' }
+            ],
+            8: baseGlossary[5],
+            9: baseGlossary[6],
+            10: [
+                { term: 'Droop P-f / Q-V', text: 'Lois de partage de charge utilisées dans beaucoup de microgrids îlotés.' }
+            ],
+            11: [
+                { term: 'DT', text: 'Digital Twin : modèle synchronisé avec l’état du système réel.' },
+                { term: 'EMS', text: 'Système de gestion énergétique souvent couplé au jumeau numérique.' },
+                { term: 'State estimation', text: 'Estimation en ligne des variables non directement mesurées.' }
+            ]
+        };
+
+        // Slides 12-19 (before I/O insertion): original offset +5
+        for (let index = 7; index <= 14; index++) {
+            slideGlossary[index + 5] = baseGlossary[index];
+        }
+        // New I/O slides at positions 20, 21, 22
+        slideGlossary[20] = [
+            { term: 'I/O Matrix', text: 'Matrice Entrées/Sorties : liste formelle des signaux échangés entre blocs.' },
+            { term: 'États internes', text: 'Variables d\'état intégrées dans les équations différentielles du bloc.' }
+        ];
+        slideGlossary[21] = [
+            { term: 'I_ph', text: 'Courant photogénéré : proportionnel à l\'irradiance G.' },
+            { term: 'V_t', text: 'Tension thermique V_t = nkT/q — dépend de la température cellule.' },
+            { term: 'P&O', text: 'Perturb & Observe : algorithme MPPT qui perturbe D et observe ΔP.' }
+        ];
+        slideGlossary[22] = [
+            { term: 'OCV', text: 'Open Circuit Voltage : tension batterie à vide, fonction du SOC.' },
+            { term: '2-RC', text: 'Modèle Thevenin à deux branches RC capturant les transitoires lents et rapides.' },
+            { term: 'xi_vdc', text: 'Intégrale du PI de régulation Vdc — quatrième état interne de la BESS.' }
+        ];
+        // Slides 23-25 (Modèle reproduit, after I/O): offset +8
+        for (let index = 15; index <= 17; index++) {
+            slideGlossary[index + 8] = baseGlossary[index];
+        }
+        // Slide 26: CONTRIB (Démarche de reproduction documentée)
+        slideGlossary[26] = [
+            { term: 'Traçabilité', text: 'Chaque équation et paramètre est relié à sa source primaire dans traceability_matrix.md.' },
+            { term: 'Proxy', text: 'Paramètre estimé par analogie quand la source ne le publie pas explicitement.' }
+        ];
+        // Slides 27+ (Validation et suite, after CONTRIB): offset +9
+        for (let index = 18; index <= 23; index++) {
+            slideGlossary[index + 9] = baseGlossary[index];
+        }
+
+        const basicGlossaryTerms = new Set([
+            'AC/DC',
+            'PV',
+            'MG',
+            'BESS',
+            'IEEE',
+            'OA'
+        ]);
+
+        function getSlideTrack(index) {
+            if (index === 0) return { label: 'Ouverture', accent: 'var(--accent-cyan)' };
+            if (index === 1) return { label: 'Sommaire', accent: 'var(--phd-secondary)' };
+            if (index <= 11) return { label: 'Contexte scientifique', accent: 'var(--accent-blue)' };
+            if (index <= 16) return { label: 'Prattico 2025', accent: 'var(--accent-green)' };
+            if (index <= 25) return { label: 'Modèle reproduit', accent: 'var(--accent-purple)' };
+            return { label: 'Validation et suite', accent: 'var(--accent-orange)' };
+        }
+
+        function renderGlossary(index) {
+            const entries = (slideGlossary[index] || []).filter(({ term }) => !basicGlossaryTerms.has(term));
+            const shouldHideGlossary = index === 0 || entries.length === 0;
+
+            glossaryBar.classList.toggle('is-hidden', shouldHideGlossary);
+            glossaryItems.classList.toggle('stacked', entries.length > 1);
+
+            if (shouldHideGlossary) {
+                glossaryItems.innerHTML = '';
+                return;
+            }
+
+            glossaryItems.innerHTML = entries.map(({ term, text }) =>
+                `<span class="glossary-item"><span class="glossary-term">${term}</span><span>${text}</span></span>`
+            ).join('');
+        }
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) slide.classList.add('active');
+                else if (index < currentSlide) slide.classList.add('prev');
+            });
+            const track = getSlideTrack(currentSlide);
+            headerContext.textContent = track.label;
+            headerContext.style.setProperty('--context-accent', track.accent);
+            renderGlossary(currentSlide);
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            document.getElementById('progress-fill').style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+        }
+
+        function nextSlide() { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        function goToSlide(index) { if (index >= 0 && index < totalSlides) { currentSlide = index; updateSlide(); } }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            else if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+            else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+        });
+
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) { diff > 0 ? nextSlide() : prevSlide(); }
+        });
+
+        updateSlide();
+    </script>
+</body>
+
+</html>
